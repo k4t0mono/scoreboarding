@@ -10,7 +10,7 @@ function getConfig() {
     conf["nInst"] = $("#nInst").val();
     var ciclos = {}
     
-    ciclos["Inteiro"] = $("#ciclosInt").val();
+    ciclos["Integer"] = $("#ciclosInt").val();
     ciclos["Add"] = $("#ciclosFPAdd").val();
     ciclos["Mult"] = $("#ciclosFPMul").val();
     ciclos["Div"] = $("#ciclosFPDiv").val();
@@ -18,7 +18,7 @@ function getConfig() {
     conf["ciclos"] = ciclos
     
     var unidades = {}
-    unidades["Inteiro"] = $("#fuInt").val();
+    unidades["Integer"] = $("#fuInt").val();
     unidades["Add"] = $("#fuFPAdd").val();
     unidades["Mult"] = $("#fuFPMul").val();
     unidades["Div"] = $("#fuFPDiv").val();
@@ -49,19 +49,95 @@ function getAllInst(nInst) {
     return insts;
 }
 
+function getUnidadeInstrucao(instrucao) {
+    switch (instrucao) {
+        case "SD":
+        case "LD":
+            return "Integer"
+        
+        case "SUBD":
+        case "ADDD":
+            return "Add"
+        
+        case "MULTD":
+            return "Mult"
+        
+        case "DIVD":
+            return "Div"
+        
+        default:
+            return "INVALIDO"
+    }
+}
+
+function destinoEhPontoFlutuante(item) {
+    if(item[0] == "F") {
+        return true;
+    }
+    return false;
+
+}
+
+function ehRegistrador(item) {
+    if(item[0] == 'R' || item[0] == 'F') {
+        return true;
+    }
+    return false;
+}
+
 $(document).ready(function() {
+    var diagrama = null;
     $("#enviar").click(function() {
         const CONFIG = getConfig();
         var insts = getAllInst(CONFIG["nInst"]);
-        var diagrama = inicializaDiagrama(CONFIG, insts);
+        diagrama = inicializaDiagrama(CONFIG, insts);
         $("#code").text(`${JSON.stringify({"config":CONFIG, "insts":insts, "diagrama":diagrama}, null, 2)}\n`);
+        
+    });
+    $("#proximo").click(function() {
+        if(diagrama != null) {
+            var instrucao = diagrama["tabela"][0]
+            if(instrucao["is"] == null) {
+                instrucao["is"] = 1;
+                diagrama["clock"] = 1;
+                var unidade = getUnidadeInstrucao(instrucao["d"]);
+                if(unidade == "INVALIDO") {
+                    alert("INVALIDO");
+                } else {
+                    var uf = diagrama["uf"][unidade + "1"];
+                    uf["tempo"] = diagrama["ciclos"][unidade];
+                    uf["ocupado"] = true;
+                    uf["operacao"] = instrucao["d"];
+                    uf["fi"] = instrucao["r"];
+                    if(instrucao["r"] in diagrama["destino"] && ((instrucao["d"] != "SD") && (instrucao["d"] != "SW"))) {
+                        diagrama["destino"][instrucao["r"]] = unidade + "1";
+                    }
+                    if(ehRegistrador(instrucao["s"])) {
+                        uf["fj"] = instrucao["s"];
+                        uf["rj"] = true;
+                    }
+                    if(ehRegistrador(instrucao["t"])) {
+                        uf["fk"] = instrucao["t"];
+                        uf["rk"] = true;
+                    }
+                }
+                
+            } else {
+                diagrama["clock"]++;
+                for(var uf in diagrama["ufs"]) {
+                    
+                }
+            }
+            $("#code").text(`${JSON.stringify({"diagrama":diagrama}, null, 2)}\n`);
+        }
         
     });
 });
 
 function inicializaDiagrama(CONFIG, insts) {
     var diagrama = {};
-    
+    diagrama["nInst"] = CONFIG["nInst"];
+    diagrama["ciclos"] = CONFIG["ciclos"];
     
     //tabela que a gente realmente se importa
     var tabela = {};
@@ -83,8 +159,8 @@ function inicializaDiagrama(CONFIG, insts) {
     //Unidades funcionais (a tabela maior e mais chata)
     var ufs = {};
     for(var tipoUnidade in CONFIG["unidades"]) {
-        uf = {};
         for(i = 0; i < CONFIG["unidades"][tipoUnidade]; i++) {
+            uf = {};
             uf["tipo"] = tipoUnidade;
             uf["tempo"] = null;
             uf["nome"] = tipoUnidade + (i + 1);
