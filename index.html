@@ -1,224 +1,242 @@
 <!DOCTYPE html>
 <html lang="pt-Br">
 <head>
-	<meta charset="utf-8">
-	<title>Scoreboarding</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="index.css" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <meta charset="utf-8">
+    <title>Scoreboarding</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="index.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
 </head>
 <body>
-	<header class="jumbotron text-center">
-		<h1>Scoreboarding</h1>
-	</header>
+    <header class="jumbotron text-center">
+        <h1>Scoreboarding</h1>
+    </header>
 
-	<div class="row container">
-		<aside class="col-5">
-			<p>
-				Número de instruções:
-				<input type="number" name="nInst" id="nInst" value="1" min="1" max="10" maxlength />
-			</p>
-			<p>Lista de instruções:</p>
+    <div class="row container">
+        <aside class="col-5">
+            <p>
+                Número de instruções:
+                <input type="number" name="nInst" id="nInst" value="1" min="1" max="10" maxlength />
+            </p>
+            <p>Lista de instruções:</p>
 
-			<table>
-				<tr>
-					<td>
-						<select size="1" name="D0" id="D0">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R0" id="R0" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S0" id="S0" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T0" id="T0" size="3" maxlength="3" /></td>
-				</tr>
+            <table>
+                <tr>
+                    <td>
+                        <select size="1" name="D0" id="D0">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R0" id="R0" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S0" id="S0" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T0" id="T0" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D1" id="D1">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R1" id="R1" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S1" id="S1" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T1" id="T1" size="3" maxlength="3" /></td>
-				</tr>
+                <tr>
+                    <td>
+                        <select size="1" name="D1" id="D1">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R1" id="R1" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S1" id="S1" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T1" id="T1" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D2" id="D2">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R2" id="R2" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S2" id="S2" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T2" id="T2" size="3" maxlength="3" /></td>
-				</tr>
+                <tr>
+                    <td>
+                        <select size="1" name="D2" id="D2">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R2" id="R2" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S2" id="S2" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T2" id="T2" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D3" id="D3">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R3" id="R3" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S3" id="S3" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T3" id="T3" size="3" maxlength="3" /></td>
-				</tr>
+                <tr>
+                    <td>
+                        <select size="1" name="D3" id="D3">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R3" id="R3" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S3" id="S3" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T3" id="T3" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D4" id="D4">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R4" id="R4" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S4" id="S4" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T4" id="T4" size="3" maxlength="3" /></td>
-				</tr>
+                <tr>
+                    <td>
+                        <select size="1" name="D4" id="D4">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R4" id="R4" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S4" id="S4" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T4" id="T4" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D5" id="D5">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R5" id="R5" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S5" id="S5" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T5" id="T5" size="3" maxlength="3" /></td>
-				</tr>
+                <tr>
+                    <td>
+                        <select size="1" name="D5" id="D5">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R5" id="R5" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S5" id="S5" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T5" id="T5" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D6" id="D6">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R6" id="R6" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S6" id="S6" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T6" id="T6" size="3" maxlength="3" /></td>
-				</tr>
+                <tr>
+                    <td>
+                        <select size="1" name="D6" id="D6">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R6" id="R6" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S6" id="S6" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T6" id="T6" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D7" id="D7">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R7" id="R7" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S7" id="S7" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T7" id="T7" size="3" maxlength="3" /></td>
-				</tr>
+                <tr>
+                    <td>
+                        <select size="1" name="D7" id="D7">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R7" id="R7" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S7" id="S7" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T7" id="T7" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D8" id="D8">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R8" id="R8" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S8" id="S8" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T8" id="T8" size="3" maxlength="3" /></td>
-				</tr>
+                <tr>
+                    <td>
+                        <select size="1" name="D8" id="D8">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R8" id="R8" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S8" id="S8" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T8" id="T8" size="3" maxlength="3" /></td>
+                </tr>
 
-				<tr>
-					<td>
-						<select size="1" name="D9" id="D9">
-							<option selected value = "">None</option>
-							<option value="LD">LD</option>
-							<option value="SD">SD</option>
-							<option value="MULTD">MULTD</option>
-							<option value="DIVD">DIVD</option>
-							<option value="ADDD">ADDD</option>
-							<option value="SUBD">SUBD</option>
-						</select>
-					</td>
-					<td><input type="text" name="R9" id="R9" size="3" maxlength="3" /></td>
-					<td><input type="text" name="S9" id="S9" size="3" maxlength="3" /></td>
-					<td><input type="text" name="T9" id="T9" size="3" maxlength="3" /></td>
-				</tr>
-			</table>
+                <tr>
+                    <td>
+                        <select size="1" name="D9" id="D9">
+                            <option selected value = "">None</option>
+                            <option value="LD">LD</option>
+                            <option value="SD">SD</option>
+                            <option value="MULTD">MULTD</option>
+                            <option value="DIVD">DIVD</option>
+                            <option value="ADDD">ADDD</option>
+                            <option value="SUBD">SUBD</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="R9" id="R9" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="S9" id="S9" size="3" maxlength="3" /></td>
+                    <td><input type="text" name="T9" id="T9" size="3" maxlength="3" /></td>
+                </tr>
+            </table>
 
-			<br />
-			<p>Ciclos por instrução:</p>
-			<p>
-				<td>Inteiro</td>
-				<td><input type="number" min="1" value="1" name="ciclosInt" id="ciclosInt" /></td>
-			</p>
-			<p>
-				<td>FP Add</td>
-				<td><input type="number" min="1" value="1" name="ciclosFPAdd" id="ciclosFPAdd" /></td>
-			</p>
-			<p>
-				<td>FP Mult</td>
-				<td><input type="number" min="1" value="1" name="ciclosFPMul" id="ciclosFPMul" /></td>
-			</p>
-			<p>
-				<td>FP Div</td>
-				<td><input type="number" min="1" value="1" name="ciclosFPDiv" id="ciclosFPDiv" /></td>
-			</p>
+            <br />
+            <p>Ciclos por instrução:</p>
+            <p>
+                <td>Inteiro</td>
+                <td><input type="number" min="1" value="1" name="ciclosInt" id="ciclosInt" /></td>
+            </p>
+            <p>
+                <td>FP Add</td>
+                <td><input type="number" min="1" value="1" name="ciclosFPAdd" id="ciclosFPAdd" /></td>
+            </p>
+            <p>
+                <td>FP Mult</td>
+                <td><input type="number" min="1" value="1" name="ciclosFPMul" id="ciclosFPMul" /></td>
+            </p>
+            <p>
+                <td>FP Div</td>
+                <td><input type="number" min="1" value="1" name="ciclosFPDiv" id="ciclosFPDiv" /></td>
+            </p>
+            <p>Quantidade FU's</p>
+            <p>
+                <td>Inteiro</td>
+                <td><input type="number" min="1" value="1" name="fuInt" id="fuInt" /></td>
+            </p>
+            <p>
+                <td>FP Add</td>
+                <td><input type="number" min="1" value="1" name="fuFPAdd" id="fuFPAdd" /></td>
+            </p>
+            <p>
+                <td>FP Mult</td>
+                <td><input type="number" min="1" value="1" name="fuFPMul" id="fuFPMul" /></td>
+            </p>
+            <p>
+                <td>FP Div</td>
+                <td><input type="number" min="1" value="1" name="fuFPDiv" id="fuFPDiv" /></td>
+            </p>
+            
+            
+            <button type="submit" id="enviar">Enviar</button>
+            <button type="reset">Limpar</button>
+        </aside>
 
-			<button type="submit" id="enviar">Enviar</button>
-			<button type="reset">Limpar</button>
-		</aside>
-
-		<main>
-			<pre id="code"></pre>
-		</main>
-	</div>
+        <main>
+            <pre id="code"></pre>
+        </main>
+    </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="scoreboarding.js"></script>
