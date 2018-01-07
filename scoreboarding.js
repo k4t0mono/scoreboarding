@@ -197,6 +197,49 @@ function despachaInst(diagrama) {
     }
 }
 
+function gerarTabelaEstadoInstrucaoHTML(diagrama) {
+    var s = (
+        "<h3>Estado das instruções</h3><table class='result'>"
+        + "<tr><th></th><th>Inst</th><th>i</th><th>j</th>"
+        + "<th>k</th><th>Is</th><th>RO</th><th>EC</th><th>Wr</th></tr>"
+    );
+
+    for (var i = 0 ; i < diagrama["config"]["nInst"]; ++i) {
+        inst = diagrama["tabela"][i];
+        s += (
+            `<tr> <td>I${i}</td> <td>${inst["d"]}</td>
+            <td>${inst["r"]}</td> <td>${inst["s"]}</td> <td>${inst["t"]}</td>
+            <td id='r${i}_is'></td> <td id='r${i}_ro'></td> <td id='r${i}_ec'></td>
+            <td id='r${i}_wr'></td> </tr>`
+        );
+    }
+
+    s += "</table>";
+    $("#estadoInst").html(s);
+}
+
+function gerarTabelaEstadoUFHTML(diagrama) {
+    var s = (
+        "<h3>Estado das UF</h3><table class='result'><tr> <th>UF</th> <th>Ocupado</th>"
+        + "<th>Op</th> <th>Fi</th> <th>Fj</th> <th>Fk</th> <th>Qj</th> <th>Qk</th>"
+        + "<th>Rk</th> <th>Rk</th> </tr>"
+    );
+
+    for(key in diagrama["uf"]) {
+        var uf = diagrama["uf"][key];
+        console.log(uf);
+        s += `<tr> <td>${uf["nome"]}</td> <td id="${uf["nome"]}_ocupado"></td>
+             <td id="${uf["nome"]}_operacao"></td><td id="${uf["nome"]}_fi"></td>
+             <td id="${uf["nome"]}_fj"></td> <td id="${uf["nome"]}_fk"></td>
+             <td id="${uf["nome"]}_qj"></td> <td id="${uf["nome"]}_qk"></td>
+             <td id="${uf["nome"]}_rj"></td> <td id="${uf["nome"]}_rk"></td> </tr>
+             `
+    }
+
+    s += "</table>"
+    $("#estadoUF").html(s);
+}
+
 $(document).ready(function() {
     var diagrama = null;
 
@@ -204,8 +247,8 @@ $(document).ready(function() {
         const CONFIG = getConfig();
         var insts = getAllInst(CONFIG["nInst"]);
         diagrama = inicializaDiagrama(CONFIG, insts);
-        $("#code").text(`${JSON.stringify({"config":CONFIG, "insts":insts, "diagrama":diagrama}, null, 2)}\n`);
-
+        gerarTabelaEstadoInstrucaoHTML(diagrama);
+        gerarTabelaEstadoUFHTML(diagrama);
     });
 
     $("#proximo").click(function() {

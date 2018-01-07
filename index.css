@@ -1,1 +1,18 @@
 /* index.css */
+
+table {
+	font-family: monospace;
+}
+
+th, td {
+	padding: 5px;
+}
+
+main div {
+	padding-bottom: 3em;
+}
+
+.result, .result td, .result th {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
