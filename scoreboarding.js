@@ -197,6 +197,8 @@ function despachaInst(diagrama) {
     }
 }
 
+// -----------------------------------------------------------------------------
+
 function gerarTabelaEstadoInstrucaoHTML(diagrama) {
     var s = (
         "<h3>Estado das instruções</h3><table class='result'>"
@@ -240,6 +242,27 @@ function gerarTabelaEstadoUFHTML(diagrama) {
     $("#estadoUF").html(s);
 }
 
+function gerarTabelaEstadoMenHTML(diagrama) {
+    var s = `<h3>Estado da Memória</h3> <table class="result">`;
+
+    for(var i = 0; i < 2; ++i) {
+        s += `<tr>`
+        for(var j = 0; j < 16; j += 2) {
+            s += `<th>F${j+i*16}</th>`
+        }
+        s += `</tr> <tr>`
+        for(var j = 0; j < 16; j += 2) {
+            s += `<td id="F${j+i*16}">&nbsp;</td>`
+        }
+        s += `</tr>`
+    }
+
+    s += "</table>"
+    $("#estadoMem").html(s);
+}
+
+// -----------------------------------------------------------------------------
+
 $(document).ready(function() {
     var diagrama = null;
 
@@ -249,6 +272,8 @@ $(document).ready(function() {
         diagrama = inicializaDiagrama(CONFIG, insts);
         gerarTabelaEstadoInstrucaoHTML(diagrama);
         gerarTabelaEstadoUFHTML(diagrama);
+        gerarTabelaEstadoMenHTML(diagrama);
+        $("#clock").html("<h3>Clock: <small id='clock'>0</small></h3>");
     });
 
     $("#proximo").click(function() {

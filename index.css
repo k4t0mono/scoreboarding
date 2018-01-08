@@ -5,7 +5,11 @@ table {
 }
 
 th, td {
-	padding: 5px;
+	padding: 2px;
+}
+
+body {
+	padding-bottom: 2em;
 }
 
 main div {
@@ -15,4 +19,5 @@ main div {
 .result, .result td, .result th {
 	border: 1px solid black;
 	border-collapse: collapse;
+	padding: 5px;
 }

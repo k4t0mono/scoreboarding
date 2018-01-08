@@ -12,14 +12,14 @@
         <h1>Scoreboarding</h1>
     </header>
 
-    <div class="row container">
-        <aside class="col-5">
+    <div class="row mx-5">
+        <aside class="col-4">
             <p>
-                Número de instruções:
+                Número de instruções:<br />
                 <input type="number" name="nInst" id="nInst" value="1" min="1" max="10" maxlength />
             </p>
-            <p>Lista de instruções:</p>
 
+            <p>Lista de instruções:</p>
             <table>
                 <tr>
                     <td>
@@ -194,47 +194,60 @@
 
             <br />
             <p>Ciclos por instrução:</p>
-            <p>
-                <td>Inteiro</td>
-                <td><input type="number" min="1" value="1" name="ciclosInt" id="ciclosInt" /></td>
-            </p>
-            <p>
-                <td>FP Add</td>
-                <td><input type="number" min="1" value="1" name="ciclosFPAdd" id="ciclosFPAdd" /></td>
-            </p>
-            <p>
-                <td>FP Mult</td>
-                <td><input type="number" min="1" value="1" name="ciclosFPMul" id="ciclosFPMul" /></td>
-            </p>
-            <p>
-                <td>FP Div</td>
-                <td><input type="number" min="1" value="1" name="ciclosFPDiv" id="ciclosFPDiv" /></td>
-            </p>
-            <p>Quantidade FU's</p>
-            <p>
-                <td>Inteiro</td>
-                <td><input type="number" min="1" value="1" name="fuInt" id="fuInt" /></td>
-            </p>
-            <p>
-                <td>FP Add</td>
-                <td><input type="number" min="1" value="1" name="fuFPAdd" id="fuFPAdd" /></td>
-            </p>
-            <p>
-                <td>FP Mult</td>
-                <td><input type="number" min="1" value="1" name="fuFPMul" id="fuFPMul" /></td>
-            </p>
-            <p>
-                <td>FP Div</td>
-                <td><input type="number" min="1" value="1" name="fuFPDiv" id="fuFPDiv" /></td>
-            </p>
+            <table>
+                <tr>
+                    <td>Inteiro</td>
+                    <td><input type="number" min="1" value="1" name="ciclosInt" id="ciclosInt" /></td>
+                </tr>
 
+                <tr>
+                    <td>FP Add</td>
+                    <td><input type="number" min="1" value="1" name="ciclosFPAdd" id="ciclosFPAdd" /></td>
+                </tr>
 
+                <tr>
+                    <td>FP Mult</td>
+                    <td><input type="number" min="1" value="1" name="ciclosFPMul" id="ciclosFPMul" /></td>
+                </tr>
+
+                <tr>
+                    <td>FP Div</td>
+                    <td><input type="number" min="1" value="1" name="ciclosFPDiv" id="ciclosFPDiv" /></td>
+                </tr>
+            </table>
+
+            </p>
+            <p>Quantidade Unidades Funcionais</p>
+            <table>
+                <tr>
+                    <td>Inteiro</td>
+                    <td><input type="number" min="1" value="1" name="fuInt" id="fuInt" /></td>
+                </tr>
+                <tr>
+                    <td>FP Add</td>
+                    <td><input type="number" min="1" value="1" name="fuFPAdd" id="fuFPAdd" /></td>
+                </tr>
+                <tr>
+                    <td>FP Mult</td>
+                    <td><input type="number" min="1" value="1" name="fuFPMul" id="fuFPMul" /></td>
+                </tr>
+                <tr>
+                    <td>FP Div</td>
+                    <td><input type="number" min="1" value="1" name="fuFPDiv" id="fuFPDiv" /></td>
+                </tr>
+            </table>
+
+            <br />
             <button type="submit" id="enviar">Enviar</button>
             <button type="reset">Limpar</button>
-            <button type="button" id="proximo">Proximo</button>
         </aside>
 
-        <main>
+        <main class="col">
+            <div>
+                <button type="button" id="proximo">Proximo</button>
+            </div>
+            
+            <div id="clock"></div>
             <div id="estadoInst"></div>
             <div id="estadoUF"></div>
             <div id="estadoMem"></div>
