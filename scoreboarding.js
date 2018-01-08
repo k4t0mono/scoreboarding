@@ -98,6 +98,7 @@ function inicializaDiagrama(CONFIG, insts) {
     var tabela = [];
     for(i = 0; i < CONFIG["nInst"]; i++) {
         var linha = {}
+        linha["n"] = i;
         linha["r"] = insts[i]["r"];
         linha["s"] = insts[i]["s"];
         linha["t"] = insts[i]["t"];
@@ -150,6 +151,10 @@ function inicializaDiagrama(CONFIG, insts) {
 function avancaCiclo(diagrama) {
     ++diagrama["clock"]; // Provavelmente deve ser trocado
     despachaInst(diagrama);
+
+    atualizaTabelaEstadoInstrucaoHTML(diagrama["tabela"]);
+    atualizaTabelaEstadoUFHTML(diagrama["uf"]);
+    atualizaTabelaEstadoMenHTML(diagrama["destino"]);
 }
 
 function despachaInst(diagrama) {
@@ -184,7 +189,7 @@ function despachaInst(diagrama) {
         console.log(`UF livre: ${nomeUF}`);
         var uf = diagrama["uf"][nomeUF];
         var inst = diagrama["tabela"][pos];
-        inst["is"] = true;
+        inst["is"] = diagrama["clock"];
         uf["tempo"] = diagrama["clock"];
         uf["ocupado"] = true;
         uf["operacao"] = inst["d"];
@@ -194,6 +199,39 @@ function despachaInst(diagrama) {
         diagrama["destino"][inst["r"]] = nomeUF;
     } else {
         console.log(`Unidades ocupadas, não despachando a instrução`);
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+function atualizaTabelaEstadoInstrucaoHTML(tabelaInsts) {
+    for(i in tabelaInsts) {
+        var inst = tabelaInsts[i];
+        $(`#i${inst["n"]}_is`).text(inst["is"] ? inst["is"] : "");
+        $(`#i${inst["n"]}_ro`).text(inst["ro"] ? inst["ro"] : "");
+        $(`#i${inst["n"]}_ec`).text(inst["ec"] ? inst["ec"] : "");
+        $(`#i${inst["n"]}_wr`).text(inst["wr"] ? inst["wr"] : "");
+    }
+}
+
+function atualizaTabelaEstadoUFHTML(ufs) {
+    for(i in ufs) {
+        var uf = ufs[i];
+        $(`#${uf["nome"]}_ocupado`).text(uf["ocupado"] ? "sim" : "");
+        $(`#${uf["nome"]}_operacao`).text(uf["operacao"] ? uf["operacao"] : "");
+        $(`#${uf["nome"]}_fi`).text(uf["fi"] ? uf["fi"] : "");
+        $(`#${uf["nome"]}_fj`).text(uf["fj"] ? uf["fj"] : "");
+        $(`#${uf["nome"]}_fk`).text(uf["fk"] ? uf["fk"] : "");
+        $(`#${uf["nome"]}_qj`).text(uf["qj"] ? uf["qj"] : "");
+        $(`#${uf["nome"]}_qk`).text(uf["qk"] ? uf["qk"] : "");
+        $(`#${uf["nome"]}_rj`).text(uf["rj"] ? "sim" : "não");
+        $(`#${uf["nome"]}_rk`).text(uf["rk"] ? "sim" : "não");
+    }
+}
+
+function atualizaTabelaEstadoMenHTML(men) {
+    for (var reg in men) {
+        $(`#${reg}`).html(men[reg] ? men[reg] : "&nbsp;");
     }
 }
 
@@ -211,8 +249,8 @@ function gerarTabelaEstadoInstrucaoHTML(diagrama) {
         s += (
             `<tr> <td>I${i}</td> <td>${inst["d"]}</td>
             <td>${inst["r"]}</td> <td>${inst["s"]}</td> <td>${inst["t"]}</td>
-            <td id='r${i}_is'></td> <td id='r${i}_ro'></td> <td id='r${i}_ec'></td>
-            <td id='r${i}_wr'></td> </tr>`
+            <td id='i${i}_is'></td> <td id='i${i}_ro'></td> <td id='i${i}_ec'></td>
+            <td id='i${i}_wr'></td> </tr>`
         );
     }
 
@@ -229,7 +267,6 @@ function gerarTabelaEstadoUFHTML(diagrama) {
 
     for(key in diagrama["uf"]) {
         var uf = diagrama["uf"][key];
-        console.log(uf);
         s += `<tr> <td>${uf["nome"]}</td> <td id="${uf["nome"]}_ocupado"></td>
              <td id="${uf["nome"]}_operacao"></td><td id="${uf["nome"]}_fi"></td>
              <td id="${uf["nome"]}_fj"></td> <td id="${uf["nome"]}_fk"></td>
@@ -281,7 +318,7 @@ $(document).ready(function() {
             alert("Envie primeiro");
         } else {
             avancaCiclo(diagrama);
-            $("#code").text(`${JSON.stringify(diagrama, null, 2)}\n`);
+            // $("#code").text(`${JSON.stringify(diagrama, null, 2)}\n`);
         }
 
     });
