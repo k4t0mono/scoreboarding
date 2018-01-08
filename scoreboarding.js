@@ -51,6 +51,10 @@ function getAllInst(nInst) {
 
 function getUnidadeInstrucao(instrucao) {
     switch (instrucao) {
+        case "ADD":
+        case "DADDUI":
+        case "BEQ":
+        case "BNEZ":
         case "SD":
         case "LD":
             return "Integer"
@@ -313,7 +317,41 @@ function gerarTabelaEstadoMenHTML(diagrama) {
 
 $(document).ready(function() {
     var diagrama = null;
-
+    
+    $("#confirmarNInst").click(function() {
+        var nInst = $("#nInst").val();
+        var tabela = "<table>"
+        for(var i = 0; i < nInst; i++) {
+            var d = "D" + i;
+            var r = "R" + i;
+            var s = "S" + i;
+            var t = "T" + i;
+            tabela += (            
+                "<tr>" +
+                    "<td>" +
+                        "<select size=\"1\" name=\"" + d + "\" id=\"" + d + "\">" +
+                        "<option selected value = \"\">None</option>" +
+                        "<option value=\"LD\">LD</option>" +
+                        "<option value=\"SD\">SD</option>" +
+                        "<option value=\"MULTD\">MULTD</option>" +
+                        "<option value=\"DIVD\">DIVD</option>" +
+                        "<option value=\"ADDD\">ADDD</option>" +
+                        "<option value=\"SUBD\">SUBD</option>" + 
+                        "<option value=\"ADD\">ADD</option>" + 
+                        "<option value=\"DADDUI\">DADDUI</option>" + 
+                        "<option value=\"BEQ\">BEQ</option>" + 
+                        "<option value=\"BNEZ\">BNEZ</option>" + 
+                    "</td>" +
+                    "<td><input type=\"text\" name=\""+ r + "\" id=\""+ r + "\" size=\"3\" maxlength=\"3\" /></td>" + 
+                    "<td><input type=\"text\" name=\""+ s + "\" id=\""+ s + "\" size=\"3\" maxlength=\"3\" /></td>" + 
+                    "<td><input type=\"text\" name=\""+ t + "\" id=\""+ t + "\" size=\"3\" maxlength=\"3\" /></td>" + 
+                "</tr>"
+            );
+        }
+        tabela += "</table>";
+        $("#listaInstrucoes").html(tabela);
+        });
+    
     $("#enviar").click(function() {
         const CONFIG = getConfig();
         var insts = getAllInst(CONFIG["nInst"]);
