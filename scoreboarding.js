@@ -154,8 +154,12 @@ function inicializaDiagrama(CONFIG, insts) {
 
 function avancaCiclo(diagrama) {
     ++diagrama["clock"]; // Provavelmente deve ser trocado
+    if(diagrama["clock"] >= 2) {
+        alert(diagrama["clock"])
+    }
     despachaInst(diagrama);
-
+    
+    atualizaClock(diagrama["clock"]);
     atualizaTabelaEstadoInstrucaoHTML(diagrama["tabela"]);
     atualizaTabelaEstadoUFHTML(diagrama["uf"]);
     atualizaTabelaEstadoMenHTML(diagrama["destino"]);
@@ -250,6 +254,11 @@ function atualizaTabelaEstadoMenHTML(men) {
     }
 }
 
+function atualizaClock(clock) {
+    $("#clock").html("<h3>Clock: <small id='clock'>" + clock + "</small></h3>");
+
+}
+
 // -----------------------------------------------------------------------------
 
 function gerarTabelaEstadoInstrucaoHTML(diagrama) {
@@ -312,6 +321,9 @@ function gerarTabelaEstadoMenHTML(diagrama) {
     s += "</table>"
     $("#estadoMem").html(s);
 }
+
+
+
 
 // -----------------------------------------------------------------------------
 
