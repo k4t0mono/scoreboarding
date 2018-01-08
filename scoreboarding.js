@@ -8,13 +8,24 @@ function getConfig() {
     var conf = {};
 
     conf["nInst"] = $("#nInst").val();
+    if(conf["nInst"] < 1) {
+        alert("O número de instruções deve ser no mínimo 1!");
+        return null;
+    }
+    
     var ciclos = {}
 
     ciclos["Integer"] = $("#ciclosInt").val();
     ciclos["Add"] = $("#ciclosFPAdd").val();
     ciclos["Mult"] = $("#ciclosFPMul").val();
     ciclos["Div"] = $("#ciclosFPDiv").val();
-
+    
+    if ((ciclos["Integer"] < 1) || (ciclos["Add"] < 1) ||
+        (ciclos["Mult"] < 1) || (ciclos["Div"] < 1)) {
+        alert("A quantidade de ciclos por instrução, para todas as unidades, deve ser de no mínimo 1 ciclo!");
+        return null;
+    }
+    
     conf["ciclos"] = ciclos
 
     var unidades = {}
@@ -22,6 +33,12 @@ function getConfig() {
     unidades["Add"] = $("#fuFPAdd").val();
     unidades["Mult"] = $("#fuFPMul").val();
     unidades["Div"] = $("#fuFPDiv").val();
+
+    if ((unidades["Integer"] < 1) || (unidades["Add"] < 1) ||
+        (unidades["Mult"] < 1) || (unidades["Div"] < 1)) {
+        alert("A quantidade de unidades funcionais deve ser no mínimo 1!");
+        return nulls;
+    }
 
     conf["unidades"] = unidades;
 
@@ -39,11 +56,77 @@ function getInst(i) {
     return inst;
 }
 
+function alertValidaInstrucao(instrucao) {
+    saida = "A instrução \n"
+    saida += instrucao["d"] + " " + instrucao["r"] + ", ";
+    saida += instrucao["s"] + ", " + instrucao["s"];
+    saida += "não atende os paramêtros do comando " + instrucao["d"];
+    alert(saida);
+}
+
+function validaInstrucao(instrucao) {
+    var unidade = getUnidadeInstrucao(instrucao["d"]);
+    if(!unidade) {
+        alert("O comando da instrução é inváilido");
+        return false;
+    }
+    if(unidade == "Integer") {
+        var comando = instrucao["d"]
+        var falhou = false;
+        if(comando == "LD" || comando == "SD") {
+            if(instrucao["r"][0] != 'F' || isNaN(parseInt(instrucao["s"])) || (instrucao["t"][0] != 'R')) {
+                alertValidaInstrucao(instrucao);
+                return true; //TODO: modificar depois para false
+            }
+            return true;
+        }
+        if(comando == "BEQ") {
+            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || (instrucao["t"].replace(" ", "") == "")) {
+                alertValidaInstrucao(instrucao);
+                return true; //TODO: modificar depois para false
+            }
+            return true;
+        }
+        if(comando == "BNEZ") {
+            if(instrucao["r"][0] != 'R' || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
+                alertValidaInstrucao(instrucao);
+                return true; //TODO: modificar depois para false
+            }
+            return true;
+        }
+        if(comando == "ADD") {
+            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || instrucao["t"][0] != 'R') {
+                alertValidaInstrucao(instrucao);
+                return true; //TODO: modificar depois para false
+            }
+            return true;
+        }
+        if(comando == "DADDUI") {
+            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || isNaN(parseInt(instrucao["t"]))) {
+                alertValidaInstrucao(instrucao);
+                return true; //TODO: modificar depois para false
+            }
+        }
+        return true; // esse é true msm
+    }
+    if(instrucao["r"][0] != 'F' || instrucao["s"][0] != 'F' || instrucao["t"][0] != 'F') {
+        alertValidaInstrucao(instrucao);
+        return true; //TODO: modificar depois para false
+    }
+    return true; //esse é true tbm
+    
+
+}
+
 function getAllInst(nInst) {
     var insts = []
 
     for (var i = 0; i < nInst; i++) {
-        insts.push(getInst(i));
+        var instrucao = getInst(i);
+        if(!validaInstrucao(instrucao)) {
+            return null;
+        }
+        insts.push(instrucao);
     }
 
     return insts;
@@ -70,7 +153,7 @@ function getUnidadeInstrucao(instrucao) {
             return "Div"
 
         default:
-            return "INVALIDO"
+            return null
     }
 }
 
@@ -322,17 +405,8 @@ function gerarTabelaEstadoMenHTML(diagrama) {
     $("#estadoMem").html(s);
 }
 
-
-
-
-// -----------------------------------------------------------------------------
-
-$(document).ready(function() {
-    var diagrama = null;
-    
-    $("#confirmarNInst").click(function() {
-        var nInst = $("#nInst").val();
-        var tabela = "<table>"
+function geraTabelaParaInserirInstrucoes(nInst) {
+    var tabela = "<table>"
         for(var i = 0; i < nInst; i++) {
             var d = "D" + i;
             var r = "R" + i;
@@ -362,11 +436,38 @@ $(document).ready(function() {
         }
         tabela += "</table>";
         $("#listaInstrucoes").html(tabela);
-        });
+}
+
+
+// -----------------------------------------------------------------------------
+
+$(document).ready(function() {
+    var confirmou = false;
+    var diagrama = null;
+    
+    $("#confirmarNInst").click(function() {
+        var nInst = $("#nInst").val();
+        if(nInst < 1) {
+            alert("O número de instruções deve ser no mínimo 1");
+            return;
+        }
+        geraTabelaParaInserirInstrucoes(nInst);
+        confirmou = true;
+    });
     
     $("#enviar").click(function() {
+        if(!confirmou) {
+            alert("Confirme o número de instruções!");
+            return;
+        }
         const CONFIG = getConfig();
+        if(!CONFIG) {
+            return;
+        }
         var insts = getAllInst(CONFIG["nInst"]);
+        if(!insts) {
+            return;
+        }
         diagrama = inicializaDiagrama(CONFIG, insts);
         gerarTabelaEstadoInstrucaoHTML(diagrama);
         gerarTabelaEstadoUFHTML(diagrama);
@@ -377,10 +478,10 @@ $(document).ready(function() {
     $("#proximo").click(function() {
         if(!diagrama) {
             alert("Envie primeiro");
-        } else {
-            avancaCiclo(diagrama);
-            // $("#code").text(`${JSON.stringify(diagrama, null, 2)}\n`);
+            return;
         }
+        avancaCiclo(diagrama);
+        // $("#code").text(`${JSON.stringify(diagrama, null, 2)}\n`);
 
     });
 
