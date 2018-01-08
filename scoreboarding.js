@@ -159,7 +159,7 @@ function avancaCiclo(diagrama) {
 
 function despachaInst(diagrama) {
     // Acha a primeira instrução não despachada
-    var pos = 0;
+    var pos = -1;
     var achou = false
     for (var i = 0 ; (!achou && i < diagrama["config"]["nInst"]); ++i) {
         if(!diagrama["tabela"][i]["is"]) {
@@ -167,7 +167,9 @@ function despachaInst(diagrama) {
             pos = i;
         }
     }
-    console.log(`Instrução ${pos}`);
+    if(pos === -1) {
+        return;
+    }
 
     // Verificar se a unidade funcional está livre
     var tipoUF = getUnidadeInstrucao(diagrama["tabela"][pos]["d"]);
@@ -184,18 +186,27 @@ function despachaInst(diagrama) {
     }
 
     // Despacha a instrucao
-    if(nomeUF) {
+    var inst = diagrama["tabela"][pos];
+    var mem = diagrama["destino"][inst["r"]];
+    if(nomeUF && !mem) {
         console.log(`Despachando instrução ${pos}`);
         console.log(`UF livre: ${nomeUF}`);
         var uf = diagrama["uf"][nomeUF];
-        var inst = diagrama["tabela"][pos];
         inst["is"] = diagrama["clock"];
         uf["tempo"] = diagrama["clock"];
         uf["ocupado"] = true;
         uf["operacao"] = inst["d"];
-        if(ehRegistrador(inst["r"])) { uf["fi"] = inst["r"]; }
-        if(ehRegistrador(inst["s"])) { uf["fj"] = inst["s"]; }
-        if(ehRegistrador(inst["t"])) { uf["fk"] = inst["t"]; }
+        uf["fi"] = ehRegistrador(inst["r"]) ? inst["r"] : null;
+        uf["fj"] = ehRegistrador(inst["s"]) ? inst["s"] : null;
+        uf["fk"] = ehRegistrador(inst["t"]) ? inst["t"] : null;
+        if(diagrama["destino"][inst["s"]]) {
+            uf["qj"] = diagrama["destino"][inst["s"]];
+            uf["rj"] = "não";
+        }
+        if(diagrama["destino"][inst["t"]]) {
+            uf["qk"] = diagrama["destino"][inst["t"]];
+            uf["rk"] = "não";
+        }
         diagrama["destino"][inst["r"]] = nomeUF;
     } else {
         console.log(`Unidades ocupadas, não despachando a instrução`);
@@ -224,8 +235,8 @@ function atualizaTabelaEstadoUFHTML(ufs) {
         $(`#${uf["nome"]}_fk`).text(uf["fk"] ? uf["fk"] : "");
         $(`#${uf["nome"]}_qj`).text(uf["qj"] ? uf["qj"] : "");
         $(`#${uf["nome"]}_qk`).text(uf["qk"] ? uf["qk"] : "");
-        $(`#${uf["nome"]}_rj`).text(uf["rj"] ? "sim" : "não");
-        $(`#${uf["nome"]}_rk`).text(uf["rk"] ? "sim" : "não");
+        $(`#${uf["nome"]}_rj`).text(uf["rj"] ? uf["rj"] : "");
+        $(`#${uf["nome"]}_rk`).text(uf["rk"] ? uf["rk"] : "");
     }
 }
 
