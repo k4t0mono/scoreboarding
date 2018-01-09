@@ -59,7 +59,7 @@ function getInst(i) {
 function alertValidaInstrucao(instrucao) {
     saida = "A instrução \n"
     saida += instrucao["d"] + " " + instrucao["r"] + ", ";
-    saida += instrucao["s"] + ", " + instrucao["s"];
+    saida += instrucao["s"] + ", " + instrucao["t"];
     saida += "não atende os paramêtros do comando " + instrucao["d"];
     alert(saida);
 }
@@ -180,11 +180,11 @@ function inicializaDiagrama(CONFIG, insts) {
         "ciclos": CONFIG["ciclos"],
         "unidades": CONFIG["unidades"]
     };
-
     //tabela que a gente realmente se importa
     var tabela = [];
     for(i = 0; i < CONFIG["nInst"]; i++) {
         var linha = {}
+        linha["instrucao"] = insts[i];
         linha["n"] = i;
         linha["r"] = insts[i]["r"];
         linha["s"] = insts[i]["s"];
@@ -198,12 +198,12 @@ function inicializaDiagrama(CONFIG, insts) {
     }
 
     diagrama["tabela"] = tabela;
-
     //Unidades funcionais (a tabela maior e mais chata)
     var ufs = {};
     for(var tipoUnidade in CONFIG["unidades"]) {
         for(i = 0; i < CONFIG["unidades"][tipoUnidade]; i++) {
             uf = {};
+            uf["instrucao"] = null;
             uf["tipo"] = tipoUnidade;
             uf["tempo"] = null;
             uf["nome"] = tipoUnidade + (i + 1);
@@ -235,17 +235,57 @@ function inicializaDiagrama(CONFIG, insts) {
 
 }
 
+function decrementaUnidadeFuncional(diagrama) {
+    unidades = diagrama["uf"];
+    for(key in unidades) {
+        unidade = unidades[key];
+        if(unidade["tempo"]) {
+            unidade["tempo"]--;
+        }
+        if(unidade["tempo"] == 0) {
+            instrucao = unidade["instrucao"];
+            for(linha in diagrama["tabela"]) {
+                i = diagrama["tabela"][linha]["instrucao"];
+                if(i) {
+                    if(i == instrucao) {
+                        alert("AQUI: " + i);
+                        alert(key);
+                        alert(diagrama["clock"]);
+                        diagrama["tabela"][linha]["ec"] = diagrama["clock"];
+                    }
+                }
+            }
+            unidade["instrucao"] = null;
+            unidade["tempo"] = null;
+            unidade["ocupado"] = false;
+            unidade["operacao"] = null;
+            unidade["fi"] = null;        //nao lembro dessas bagaca, apenas copiei
+            unidade["fj"] = null;
+            unidade["fk"] = null;
+            unidade["qj"] = null;
+            unidade["qk"] = null;
+            unidade["rj"] = false;
+            unidade["rk"] = false;
+            
+        }
+    }
+}
+
+
 function avancaCiclo(diagrama) {
     ++diagrama["clock"]; // Provavelmente deve ser trocado
     if(diagrama["clock"] >= 2) {
-        alert(diagrama["clock"])
+        alert(diagrama["clock"]);
     }
+    decrementaUnidadeFuncional(diagrama);
     despachaInst(diagrama);
+    
     
     atualizaClock(diagrama["clock"]);
     atualizaTabelaEstadoInstrucaoHTML(diagrama["tabela"]);
     atualizaTabelaEstadoUFHTML(diagrama["uf"]);
     atualizaTabelaEstadoMenHTML(diagrama["destino"]);
+    
 }
 
 function despachaInst(diagrama) {
@@ -275,7 +315,7 @@ function despachaInst(diagrama) {
             nomeUF = nome;
         }
     }
-
+    
     // Despacha a instrucao
     var inst = diagrama["tabela"][pos];
     var mem = diagrama["destino"][inst["r"]];
@@ -283,8 +323,10 @@ function despachaInst(diagrama) {
         console.log(`Despachando instrução ${pos}`);
         console.log(`UF livre: ${nomeUF}`);
         var uf = diagrama["uf"][nomeUF];
+        uf["instrucao"] = inst["instrucao"];
         inst["is"] = diagrama["clock"];
-        uf["tempo"] = diagrama["clock"];
+        uf["tempo"] = diagrama["config"]["ciclos"][uf["tipo"]];
+        alert(uf["tempo"]);
         uf["ocupado"] = true;
         uf["operacao"] = inst["d"];
         uf["fi"] = ehRegistrador(inst["r"]) ? inst["r"] : null;
@@ -319,7 +361,8 @@ function atualizaTabelaEstadoInstrucaoHTML(tabelaInsts) {
 function atualizaTabelaEstadoUFHTML(ufs) {
     for(i in ufs) {
         var uf = ufs[i];
-        $(`#${uf["nome"]}_ocupado`).text(uf["ocupado"] ? "sim" : "");
+        $(`#${uf["nome"]}_tempo`).text(uf["tempo"] ? uf["tempo"] : "");
+        $(`#${uf["nome"]}_ocupado`).text(uf["ocupado"] ? "sim" : "não");
         $(`#${uf["nome"]}_operacao`).text(uf["operacao"] ? uf["operacao"] : "");
         $(`#${uf["nome"]}_fi`).text(uf["fi"] ? uf["fi"] : "");
         $(`#${uf["nome"]}_fj`).text(uf["fj"] ? uf["fj"] : "");
@@ -367,14 +410,15 @@ function gerarTabelaEstadoInstrucaoHTML(diagrama) {
 
 function gerarTabelaEstadoUFHTML(diagrama) {
     var s = (
-        "<h3>Estado das UF</h3><table class='result'><tr> <th>UF</th> <th>Ocupado</th>"
+        "<h3>Estado das UF</h3><table class='result'><tr> <th>Tempo</th> <th>UF</th> <th>Ocupado</th>"
         + "<th>Op</th> <th>Fi</th> <th>Fj</th> <th>Fk</th> <th>Qj</th> <th>Qk</th>"
-        + "<th>Rk</th> <th>Rk</th> </tr>"
+        + "<th>Rj</th> <th>Rk</th> </tr>"
     );
 
     for(key in diagrama["uf"]) {
         var uf = diagrama["uf"][key];
-        s += `<tr> <td>${uf["nome"]}</td> <td id="${uf["nome"]}_ocupado"></td>
+        s += `<tr><td id="${uf["nome"]}_tempo"></td>
+             <td>${uf["nome"]}</td> <td id="${uf["nome"]}_ocupado"></td>
              <td id="${uf["nome"]}_operacao"></td><td id="${uf["nome"]}_fi"></td>
              <td id="${uf["nome"]}_fj"></td> <td id="${uf["nome"]}_fk"></td>
              <td id="${uf["nome"]}_qj"></td> <td id="${uf["nome"]}_qk"></td>
@@ -470,8 +514,11 @@ $(document).ready(function() {
         }
         diagrama = inicializaDiagrama(CONFIG, insts);
         gerarTabelaEstadoInstrucaoHTML(diagrama);
+        atualizaTabelaEstadoInstrucaoHTML(diagrama["tabela"])
         gerarTabelaEstadoUFHTML(diagrama);
+        atualizaTabelaEstadoUFHTML(diagrama["uf"]);
         gerarTabelaEstadoMenHTML(diagrama);
+        atualizaTabelaEstadoMenHTML(diagrama["destino"]);
         $("#clock").html("<h3>Clock: <small id='clock'>0</small></h3>");
     });
 
