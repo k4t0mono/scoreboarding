@@ -214,7 +214,6 @@ function inicializaDiagrama(CONFIG, insts) {
     for(var tipoUnidade in CONFIG["unidades"]) {
         for(i = 0; i < CONFIG["unidades"][tipoUnidade]; i++) {
             uf = {};
-            uf["travou"] = false;
             uf["instrucao"] = null;
             uf["tipo"] = tipoUnidade;
             uf["tempo"] = null;
@@ -224,10 +223,12 @@ function inicializaDiagrama(CONFIG, insts) {
             uf["fi"] = null;        //nao lembro dessas bagaca, apenas copiei
             uf["fj"] = null;
             uf["fk"] = null;
+            uf["qi"] = null;        //usado somente no SD, BEQ e BNEZ
             uf["qj"] = null;
             uf["qk"] = null;
             uf["rj"] = false;
             uf["rk"] = false;
+            uf["escrevendo"] = false; //usado para saber se falta terminar a escrita
             ufs[uf["nome"]] = uf;
         }
     }
@@ -251,13 +252,18 @@ function decrementaUnidadeFuncional(diagrama) {
     unidades = diagrama["uf"];
     for(key in unidades) {
         unidade = unidades[key];
-        if(unidade["tempo"]) {
-            unidade["tempo"]--;
-        }
-        if(unidade["tempo"] === 0 && !unidade["travou"]) {
-            instrucao = unidade["instrucao"];
-            diagrama["tabela"][instrucao["indice"]]["ec"] = diagrama["clock"];
-            unidade["travou"] = true;
+        if(unidade["ocupado"] && !unidade["escrevendo"]) {
+            linha = unidade["instrucao"]["indice"];
+            if(diagrama["tabela"][linha]["ro"]) {
+                if(unidade["tempo"]) {
+                    unidade["tempo"]--;
+                }
+                if(unidade["tempo"] === 0 && !unidade["travou"]) {
+                    instrucao = unidade["instrucao"];
+                    diagrama["tabela"][instrucao["indice"]]["ec"] = diagrama["clock"];
+                    unidade["travou"] = true;
+                }
+            }
         }
     }
 }
@@ -279,10 +285,23 @@ function primeiraInstrucaoComDestino(unidade, unidades) {
 function ninguemTemQueLerAntes(unidade, unidades) {
     for(j in unidades) {
         var unidadeAux = unidades[j];
-        if(unidadeAux["ocupado"]) {
-            if(unidade["fi"] == unidadeAux["fj"] || unidade["fi"] == unidadeAux["fk"]) {
-                if(unidadeAux["instrucao"]["indice"] < unidade["instrucao"]["indice"]) {
-                    return false;
+        if(unidadeAux["ocupado"] && (unidadeAux["rj"] == "não" || unidade["rk"] == "não")) {
+            if(unidadeAux["instrucao"]["indice"] < unidade["instrucao"]["indice"]) {
+                if(temEscrita(unidade["instrucao"]["d"])) {
+                    if((unidade["fi"] == unidadeAux["fj"]) || (unidade["fi"] == unidadeAux["fk"])) {
+                        return false;
+                    }
+                } else {
+                    if(unidadeAux["instrucao"]["d"] == "BEQ") {
+                        if(unidade["fi"] == undidadeAux["fj"]) {
+                            return false;
+                        }
+                    }
+                    if(unidadeAux["instrucao"]["d"] == "SD" || unidadeAux["instrucao"]["d"] == "BNEZ") {
+                        if(unidade["fi"] == unidadeAux["instrucao"]["d"]) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
@@ -294,14 +313,19 @@ function atualizaUnidades(unidade, unidades) {
     for(key in unidades) {
         unidadeAux = unidades[key];
         if(temEscrita(unidade["operacao"])) {
-            alert(unidade["operacao"]);
-            if(unidade["fi"] == unidadeAux["fj"]) {
-                unidadeAux["qj"] = null;
-                unidadeAux["rj"] = "sim";
-            }
-            if(unidade["fi"] == unidadeAux["fk"]) {
-                unidadeAux["qk"] = null;
-                unidadeAux["rk"] = "sim";
+            if(temEscrita(unidadeAux["operacao"])) {
+                if(unidade["fi"] == unidadeAux["fj"]) {
+                    unidadeAux["qj"] = 1;
+                    unidadeAux["rj"] = "sim";
+                }
+                if(unidade["fi"] == unidadeAux["fk"]) {
+                    unidadeAux["qk"] = 1;
+                    unidadeAux["rk"] = "sim";
+                }
+            } else {
+                if(unidade["fi"] == unidadeAux["instrucao"]["r"]) {
+                    unidadeAux["qi"] = 1;
+                }
             }
         }
     }
@@ -312,28 +336,71 @@ function escreveDestino(diagrama) {
     var unidades = diagrama["uf"];
     for(i in unidades) {
         var unidade = unidades[i];
-        if(unidade["ocupado"]) {
+        if(unidade["ocupado"] && !unidade["escrevendo"]) {
             var linha = diagrama["tabela"][unidade["instrucao"]["indice"]];
             if(primeiraInstrucaoComDestino(unidade, unidades) && ninguemTemQueLerAntes(unidade, unidades) && linha["ec"]) {
                 linha["wr"] = diagrama["clock"];
                 atualizaUnidades(unidade, unidades);
-                diagrama["destino"][unidade["fi"]] = null;
                 unidade["instrucao"] = null;
                 unidade["tempo"] = null;
-                unidade["travou"] = false;
                 unidade["ocupado"] = false;
                 unidade["operacao"] = null;
-                unidade["fi"] = null;        
                 unidade["fj"] = null;
                 unidade["fk"] = null;
                 unidade["qj"] = null;
                 unidade["qk"] = null;
                 unidade["rj"] = false;
                 unidade["rk"] = false;
+                unidade["escrevendo"] = true;
             }
         }
     }
     
+}
+
+function leOperandos(diagrama) {
+    for(key in unidades) {
+        unidade = unidades[key];
+        var podeLer = true;
+        if(unidade["qj"] === 1 || unidade["qk"] === 1) {
+            unidade["qj"] = null;
+            unidade["qk"] = null;
+            podeLer = false;
+        }
+        if(unidade["qi"] === 1) {
+            unidade["qi"] = null;
+            podeLer = false;
+        }
+        if(podeLer) {
+            if(unidade["ocupado"] && !unidade["escrevendo"]) {
+                if(temEscrita(unidade["instrucao"]["d"])) {
+                    if(!unidade["qj"] && !unidade["qk"]) {
+                        linha = unidade["instrucao"]["indice"];
+                        if(!diagrama["tabela"][linha]["ro"]) {
+                            diagrama["tabela"][linha]["ro"] = diagrama["clock"];
+                        }
+                    }
+                } else {
+                    if(!unidade["qi"]) {
+                        linha = unidade["instrucao"]["indice"];
+                        if(!diagrama["tabela"][linha]["ro"]) {
+                            comando = unidade["instrucao"]["d"];
+                            if(comando == "SD" || comando == "BNEZ") {
+                                diagrama["tabela"][linha]["ro"] = diagrama["clock"];
+                            } else {
+                                if(comando == "BEQ") {
+                                    if(!unidade["qj"]) {
+                                        diagrama["tabela"][linha]["ro"] = diagrama["clock"];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -342,6 +409,7 @@ function avancaCiclo(diagrama) {
     
     escreveDestino(diagrama);
     decrementaUnidadeFuncional(diagrama);
+    leOperandos(diagrama);
     despachaInst(diagrama);
     
     atualizaClock(diagrama["clock"]);
@@ -362,20 +430,24 @@ function despachaInst(diagrama) {
         }
     }
     if(pos === -1) {
+        resetaEscritas(diagrama);
         return;
     }
-
     // Verificar se a unidade funcional está livre
     var tipoUF = getUnidadeInstrucao(diagrama["tabela"][pos]["d"]);
     console.log(`O tipo da UF: ${tipoUF}`);
 
     var nomeUF = null;
     achou = false;
+    unidadesEscrevendo = {};
     for (var i = 1; (!achou && i <= diagrama["config"]["unidades"][tipoUF]); i++) {
         var nome = `${tipoUF}${i}`;
-        if(!diagrama["uf"][nome]["ocupado"]) {
-            achou = true;
-            nomeUF = nome;
+        ocp = diagrama["uf"][nome]["ocupado"];
+        if(!ocp) {
+            if(!diagrama["uf"][nome]["escrevendo"]) {
+                achou = true;
+                nomeUF = nome;
+            }
         }
     }
     
@@ -397,6 +469,10 @@ function despachaInst(diagrama) {
         }
         uf["fj"] = ehRegistrador(inst["s"]) ? inst["s"] : null;
         uf["fk"] = ehRegistrador(inst["t"]) ? inst["t"] : null;
+        
+        if(diagrama["destino"][inst["r"]] && !escreve) {
+            uf["qi"] = diagrama["destino"][inst["r"]];
+        }
         if(diagrama["destino"][inst["s"]] ) {
             uf["qj"] = diagrama["destino"][inst["s"]];
             uf["rj"] = "não";
@@ -416,8 +492,29 @@ function despachaInst(diagrama) {
         if(escreve) {
             diagrama["destino"][inst["r"]] = nomeUF;
         }
+        
     } else {
+        //for(key in diagrama["uf"]) {
+            //unidade = diagrama["uf"][key]
+            //if(unidade["escrevendo"] && unidade["travou"]) {
+                //diagrama["destino"][unidade["fi"]] = null;
+                //unidade["travou"] = false;
+                //unidade["escrevendo"] = false;
+            //}
+        //}
         console.log(`Unidades ocupadas, não despachando a instrução`);
+    }
+    resetaEscritas(diagrama);
+}
+function resetaEscritas(diagrama) {
+    for(key in diagrama["uf"]) {
+        unidade = diagrama["uf"][key];
+        if(unidade["escrevendo"] && unidade["travou"]) {
+            diagrama["destino"][unidade["fi"]] = null;
+            unidade["travou"] = false;
+            unidade["escrevendo"] = false;
+            unidade["fi"] = null; 
+        }
     }
 }
 
@@ -437,13 +534,13 @@ function atualizaTabelaEstadoUFHTML(ufs) {
     for(i in ufs) {
         var uf = ufs[i];
         $(`#${uf["nome"]}_tempo`).text((uf["tempo"] !== null) ? uf["tempo"] : "");
-        $(`#${uf["nome"]}_ocupado`).text(uf["ocupado"] ? "sim" : "não");
+        $(`#${uf["nome"]}_ocupado`).text((uf["ocupado"]) ? "sim" : "não");
         $(`#${uf["nome"]}_operacao`).text(uf["operacao"] ? uf["operacao"] : "");
         $(`#${uf["nome"]}_fi`).text(uf["fi"] ? uf["fi"] : "");
         $(`#${uf["nome"]}_fj`).text(uf["fj"] ? uf["fj"] : "");
         $(`#${uf["nome"]}_fk`).text(uf["fk"] ? uf["fk"] : "");
-        $(`#${uf["nome"]}_qj`).text(uf["qj"] ? uf["qj"] : "");
-        $(`#${uf["nome"]}_qk`).text(uf["qk"] ? uf["qk"] : "");
+        $(`#${uf["nome"]}_qj`).text(((uf["qj"]) && (uf["qj"] !== 1)) ? uf["qj"] : "");
+        $(`#${uf["nome"]}_qk`).text(((uf["qk"]) && (uf["qk"] !== 1)) ? uf["qk"] : "");
         $(`#${uf["nome"]}_rj`).text(uf["rj"] ? uf["rj"] : "");
         $(`#${uf["nome"]}_rk`).text(uf["rk"] ? uf["rk"] : "");
     }
