@@ -341,16 +341,8 @@ function escreveDestino(diagrama) {
             if(primeiraInstrucaoComDestino(unidade, unidades) && ninguemTemQueLerAntes(unidade, unidades) && linha["ec"]) {
                 linha["wr"] = diagrama["clock"];
                 atualizaUnidades(unidade, unidades);
-                unidade["instrucao"] = null;
                 unidade["tempo"] = null;
                 unidade["ocupado"] = false;
-                unidade["operacao"] = null;
-                unidade["fj"] = null;
-                unidade["fk"] = null;
-                unidade["qj"] = null;
-                unidade["qk"] = null;
-                unidade["rj"] = false;
-                unidade["rk"] = false;
                 unidade["escrevendo"] = true;
             }
         }
@@ -506,14 +498,24 @@ function despachaInst(diagrama) {
     }
     resetaEscritas(diagrama);
 }
+
 function resetaEscritas(diagrama) {
     for(key in diagrama["uf"]) {
         unidade = diagrama["uf"][key];
         if(unidade["escrevendo"] && unidade["travou"]) {
+            atualizaUnidades(unidade, diagrama["uf"])
             diagrama["destino"][unidade["fi"]] = null;
             unidade["travou"] = false;
             unidade["escrevendo"] = false;
-            unidade["fi"] = null; 
+            unidade["instrucao"] = null;
+            unidade["operacao"] = null;
+            unidade["fi"] = null;
+            unidade["fj"] = null;
+            unidade["fk"] = null;
+            unidade["qj"] = null;
+            unidade["qk"] = null;
+            unidade["rj"] = false;
+            unidade["rk"] = false;
         }
     }
 }
