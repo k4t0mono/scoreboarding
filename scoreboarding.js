@@ -157,6 +157,17 @@ function getUnidadeInstrucao(instrucao) {
     }
 }
 
+function temEscrita(comando) {
+    switch (comando) {
+        case "SD":
+        case "BEQ":
+        case "BNEZ":
+            return false;
+        default:
+            return true;
+    }
+}   
+
 function destinoEhPontoFlutuante(item) {
     if(item[0] == "F") {
         return true;
@@ -279,6 +290,23 @@ function ninguemTemQueLerAntes(unidade, unidades) {
     return true;
 }
 
+function atualizaUnidades(unidade, unidades) {
+    for(key in unidades) {
+        unidadeAux = unidades[key];
+        if(temEscrita(unidade["operacao"])) {
+            alert(unidade["operacao"]);
+            if(unidade["fi"] == unidadeAux["fj"]) {
+                unidadeAux["qj"] = null;
+                unidadeAux["rj"] = "sim";
+            }
+            if(unidade["fi"] == unidadeAux["fk"]) {
+                unidadeAux["qk"] = null;
+                unidadeAux["rk"] = "sim";
+            }
+        }
+    }
+}
+
 
 function escreveDestino(diagrama) {
     var unidades = diagrama["uf"];
@@ -288,6 +316,7 @@ function escreveDestino(diagrama) {
             var linha = diagrama["tabela"][unidade["instrucao"]["indice"]];
             if(primeiraInstrucaoComDestino(unidade, unidades) && ninguemTemQueLerAntes(unidade, unidades) && linha["ec"]) {
                 linha["wr"] = diagrama["clock"];
+                atualizaUnidades(unidade, unidades);
                 diagrama["destino"][unidade["fi"]] = null;
                 unidade["instrucao"] = null;
                 unidade["tempo"] = null;
@@ -352,8 +381,9 @@ function despachaInst(diagrama) {
     
     // Despacha a instrucao
     var inst = diagrama["tabela"][pos];
+    var escreve = temEscrita(inst["d"]);
     var mem = diagrama["destino"][inst["r"]];
-    if(nomeUF && !mem) {
+    if(nomeUF && (!mem || !escreve)) {
         console.log(`Despachando instrução ${pos}`);
         console.log(`UF livre: ${nomeUF}`);
         var uf = diagrama["uf"][nomeUF];
@@ -362,18 +392,30 @@ function despachaInst(diagrama) {
         uf["tempo"] = diagrama["config"]["ciclos"][uf["tipo"]];
         uf["ocupado"] = true;
         uf["operacao"] = inst["d"];
-        uf["fi"] = ehRegistrador(inst["r"]) ? inst["r"] : null;
+        if(escreve) {
+            uf["fi"] = ehRegistrador(inst["r"]) ? inst["r"] : null;
+        }
         uf["fj"] = ehRegistrador(inst["s"]) ? inst["s"] : null;
         uf["fk"] = ehRegistrador(inst["t"]) ? inst["t"] : null;
-        if(diagrama["destino"][inst["s"]]) {
+        if(diagrama["destino"][inst["s"]] ) {
             uf["qj"] = diagrama["destino"][inst["s"]];
             uf["rj"] = "não";
+        } else {
+            if(uf["fj"]) {
+                uf["rj"] = "sim";
+            }
         }
         if(diagrama["destino"][inst["t"]]) {
             uf["qk"] = diagrama["destino"][inst["t"]];
             uf["rk"] = "não";
+        } else {
+            if(uf["fk"]) {
+                uf["rk"] = "sim";
+            }
         }
-        diagrama["destino"][inst["r"]] = nomeUF;
+        if(escreve) {
+            diagrama["destino"][inst["r"]] = nomeUF;
+        }
     } else {
         console.log(`Unidades ocupadas, não despachando a instrução`);
     }
