@@ -282,11 +282,12 @@ function primeiraInstrucaoComDestino(unidade, unidades) {
     return true;
 }
 
-function ninguemTemQueLerAntes(unidade, unidades) {
+function ninguemTemQueLerAntes(unidade, unidades, diagrama) {
     for(j in unidades) {
         var unidadeAux = unidades[j];
-        if(unidadeAux["ocupado"] && (unidadeAux["rj"] == "não" || unidade["rk"] == "não")) {
-            if(unidadeAux["instrucao"]["indice"] < unidade["instrucao"]["indice"]) {
+        if(unidadeAux["ocupado"]) {
+            linha = diagrama["tabela"][unidadeAux["instrucao"]["indice"]];
+            if(unidadeAux["instrucao"]["indice"] < unidade["instrucao"]["indice"]  && !(linha["ro"])) {
                 if(temEscrita(unidade["instrucao"]["d"])) {
                     if((unidade["fi"] == unidadeAux["fj"]) || (unidade["fi"] == unidadeAux["fk"])) {
                         return false;
@@ -298,7 +299,7 @@ function ninguemTemQueLerAntes(unidade, unidades) {
                         }
                     }
                     if(unidadeAux["instrucao"]["d"] == "SD" || unidadeAux["instrucao"]["d"] == "BNEZ") {
-                        if(unidade["fi"] == unidadeAux["instrucao"]["d"]) {
+                        if(unidade["fi"] == unidadeAux["instrucao"]["r"]) {
                             return false;
                         }
                     }
@@ -315,16 +316,16 @@ function atualizaUnidades(unidade, unidades) {
         if(temEscrita(unidade["operacao"])) {
             if(temEscrita(unidadeAux["operacao"])) {
                 if(unidade["fi"] == unidadeAux["fj"]) {
-                    unidadeAux["qj"] = 1;
+                    unidadeAux["qj"] = null;
                     unidadeAux["rj"] = "sim";
                 }
                 if(unidade["fi"] == unidadeAux["fk"]) {
-                    unidadeAux["qk"] = 1;
+                    unidadeAux["qk"] = null;
                     unidadeAux["rk"] = "sim";
                 }
             } else {
                 if(unidade["fi"] == unidadeAux["instrucao"]["r"]) {
-                    unidadeAux["qi"] = 1;
+                    unidadeAux["qi"] = null;
                 }
             }
         }
@@ -338,9 +339,8 @@ function escreveDestino(diagrama) {
         var unidade = unidades[i];
         if(unidade["ocupado"] && !unidade["escrevendo"]) {
             var linha = diagrama["tabela"][unidade["instrucao"]["indice"]];
-            if(primeiraInstrucaoComDestino(unidade, unidades) && ninguemTemQueLerAntes(unidade, unidades) && linha["ec"]) {
+            if(primeiraInstrucaoComDestino(unidade, unidades) && ninguemTemQueLerAntes(unidade, unidades, diagrama) && linha["ec"]) {
                 linha["wr"] = diagrama["clock"];
-                atualizaUnidades(unidade, unidades);
                 unidade["tempo"] = null;
                 unidade["ocupado"] = false;
                 unidade["escrevendo"] = true;
@@ -354,15 +354,15 @@ function leOperandos(diagrama) {
     for(key in unidades) {
         unidade = unidades[key];
         var podeLer = true;
-        if(unidade["qj"] === 1 || unidade["qk"] === 1) {
-            unidade["qj"] = null;
-            unidade["qk"] = null;
-            podeLer = false;
-        }
-        if(unidade["qi"] === 1) {
-            unidade["qi"] = null;
-            podeLer = false;
-        }
+        //if(unidade["qj"] === 1 || unidade["qk"] === 1) {
+            //unidade["qj"] = null;
+            //unidade["qk"] = null;
+            //podeLer = false;
+        //}
+        //if(unidade["qi"] === 1) {
+            //unidade["qi"] = null;
+            //podeLer = false;
+        //}
         if(podeLer) {
             if(unidade["ocupado"] && !unidade["escrevendo"]) {
                 if(temEscrita(unidade["instrucao"]["d"])) {
