@@ -57,11 +57,11 @@ function getInst(i) {
 }
 //TODO: Descomentar
 function alertValidaInstrucao(instrucao) {
-    //saida = "A instrução \n"
-    //saida += instrucao["d"] + " " + instrucao["r"] + ", ";
-    //saida += instrucao["s"] + ", " + instrucao["t"];
-    //saida += "não atende os paramêtros do comando " + instrucao["d"];
-    //alert(saida);
+    saida = "A instrução \n"
+    saida += instrucao["d"] + " " + instrucao["r"] + ", ";
+    saida += instrucao["s"] + ", " + instrucao["t"];
+    saida += " não atende os paramêtros do comando " + instrucao["d"];
+    alert(saida);
 }
 
 function validaInstrucao(instrucao) {
@@ -76,42 +76,42 @@ function validaInstrucao(instrucao) {
         if(comando == "LD" || comando == "SD") {
             if(instrucao["r"][0] != 'F' || isNaN(parseInt(instrucao["s"])) || (instrucao["t"][0] != 'R')) {
                 alertValidaInstrucao(instrucao);
-                return true; //TODO: modificar depois para false
+                return false; //TODO: modificar depois para false
             }
             return true;
         }
         if(comando == "BEQ") {
             if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || (instrucao["t"].replace(" ", "") == "")) {
                 alertValidaInstrucao(instrucao);
-                return true; //TODO: modificar depois para false
+                return false; //TODO: modificar depois para false
             }
             return true;
         }
         if(comando == "BNEZ") {
             if(instrucao["r"][0] != 'R' || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
                 alertValidaInstrucao(instrucao);
-                return true; //TODO: modificar depois para false
+                return false; //TODO: modificar depois para false
             }
             return true;
         }
         if(comando == "ADD") {
             if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || instrucao["t"][0] != 'R') {
                 alertValidaInstrucao(instrucao);
-                return true; //TODO: modificar depois para false
+                return false; //TODO: modificar depois para false
             }
             return true;
         }
         if(comando == "DADDUI") {
             if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || isNaN(parseInt(instrucao["t"]))) {
                 alertValidaInstrucao(instrucao);
-                return true; //TODO: modificar depois para false
+                return false; //TODO: modificar depois para false
             }
         }
         return true; // esse é true msm
     }
     if(instrucao["r"][0] != 'F' || instrucao["s"][0] != 'F' || instrucao["t"][0] != 'F') {
         alertValidaInstrucao(instrucao);
-        return true; //TODO: modificar depois para false
+        return false; //TODO: modificar depois para false
     }
     return true; //esse é true tbm
     
@@ -324,6 +324,19 @@ function atualizaUnidades(unidade, unidades) {
                     unidadeAux["rk"] = "sim";
                 }
             } else {
+                if(unidadeAux["instrucao"]["d"] == "SD") {
+                    if(unidade["fi"] == unidadeAux["fk"]) {
+                        unidadeAux["qk"] = null;
+                        unidadeAux["rk"] = "sim";
+                    }
+                }
+                
+                if(unidadeAux["instrucao"]["d"] == "BEQ") {
+                    if(unidade["fi"] == unidadeAux["fj"]) {
+                        unidadeAux["qj"] = null;
+                        unidadeAux["rj"] = "sim";
+                    }
+                }
                 if(unidade["fi"] == unidadeAux["instrucao"]["r"]) {
                     unidadeAux["qi"] = null;
                 }
@@ -353,30 +366,33 @@ function escreveDestino(diagrama) {
 function leOperandos(diagrama) {
     for(key in unidades) {
         unidade = unidades[key];
-        var podeLer = true;
-        alert(unidade["qi"]);
-        if(podeLer) {
-            if(unidade["ocupado"] && !unidade["escrevendo"]) {
-                if(temEscrita(unidade["instrucao"]["d"])) {
-                    if(!unidade["qj"] && !unidade["qk"]) {
-                        linha = unidade["instrucao"]["indice"];
-                        if(!diagrama["tabela"][linha]["ro"]) {
-                            diagrama["tabela"][linha]["ro"] = diagrama["clock"];
-                        }
+        if(unidade["ocupado"] && !unidade["escrevendo"]) {
+            if(temEscrita(unidade["instrucao"]["d"])) {
+                if(!unidade["qj"] && !unidade["qk"]) {
+                    linha = unidade["instrucao"]["indice"];
+                    if(!diagrama["tabela"][linha]["ro"]) {
+                        diagrama["tabela"][linha]["ro"] = diagrama["clock"];
                     }
-                } else {
-                    if(!unidade["qi"]) {
-                        linha = unidade["instrucao"]["indice"];
-                        if(!diagrama["tabela"][linha]["ro"]) {
-                            comando = unidade["instrucao"]["d"];
-                            if(comando == "SD" || comando == "BNEZ") {
+                }
+            } else {
+                if(!unidade["qi"]) {
+                    linha = unidade["instrucao"]["indice"];
+                    if(!diagrama["tabela"][linha]["ro"]) {
+                        comando = unidade["instrucao"]["d"];
+                        if(comando == "BNEZ") {
+                            diagrama["tabela"][linha]["ro"] = diagrama["clock"];
+                            return;
+                        }
+                        if(comando == "SD") {
+                            if(!unidade["qk"]) {
                                 diagrama["tabela"][linha]["ro"] = diagrama["clock"];
-                            } else {
-                                if(comando == "BEQ") {
-                                    if(!unidade["qj"]) {
-                                        diagrama["tabela"][linha]["ro"] = diagrama["clock"];
-                                    }
-                                }
+                                return;
+                            }
+                        }
+                        if(comando == "BEQ") {
+                            if(!unidade["qj"]) {
+                                diagrama["tabela"][linha]["ro"] = diagrama["clock"];
+                                return;
                             }
                         }
                     }
