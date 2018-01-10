@@ -354,15 +354,7 @@ function leOperandos(diagrama) {
     for(key in unidades) {
         unidade = unidades[key];
         var podeLer = true;
-        //if(unidade["qj"] === 1 || unidade["qk"] === 1) {
-            //unidade["qj"] = null;
-            //unidade["qk"] = null;
-            //podeLer = false;
-        //}
-        //if(unidade["qi"] === 1) {
-            //unidade["qi"] = null;
-            //podeLer = false;
-        //}
+        alert(unidade["qi"]);
         if(podeLer) {
             if(unidade["ocupado"] && !unidade["escrevendo"]) {
                 if(temEscrita(unidade["instrucao"]["d"])) {
@@ -409,6 +401,14 @@ function avancaCiclo(diagrama) {
     atualizaTabelaEstadoUFHTML(diagrama["uf"]);
     atualizaTabelaEstadoMenHTML(diagrama["destino"]);
     
+    var achou = false;
+    for(i in diagrama["tabela"]) {
+        if(!diagrama["tabela"][i]["wr"]) {
+            achou = true;
+        }
+    }
+    
+    return (!achou);
 }
 
 function despachaInst(diagrama) {
@@ -662,6 +662,7 @@ function geraTabelaParaInserirInstrucoes(nInst) {
 $(document).ready(function() {
     var confirmou = false;
     var diagrama = null;
+    var terminou = false;
     
     $("#confirmarNInst").click(function() {
         var nInst = $("#nInst").val();
@@ -693,6 +694,7 @@ $(document).ready(function() {
         atualizaTabelaEstadoUFHTML(diagrama["uf"]);
         gerarTabelaEstadoMenHTML(diagrama);
         atualizaTabelaEstadoMenHTML(diagrama["destino"]);
+        terminou = false;
         $("#clock").html("<h3>Clock: <small id='clock'>0</small></h3>");
     });
 
@@ -701,9 +703,22 @@ $(document).ready(function() {
             alert("Envie primeiro");
             return;
         }
-        avancaCiclo(diagrama);
+        if(terminou) {
+            alert("Todas as instruções estão completadas.");
+            return;
+        }
+        terminou = avancaCiclo(diagrama);
         // $("#code").text(`${JSON.stringify(diagrama, null, 2)}\n`);
 
+    });
+    $("#resultado").click(function() {
+        if(!diagrama) {
+            alert("Envie primeiro");
+            return;
+        }
+        while(!terminou) {
+            terminou = avancaCiclo(diagrama);
+        }
     });
 
     // $("#proximo").click(function() {
