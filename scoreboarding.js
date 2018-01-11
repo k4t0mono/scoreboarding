@@ -1,8 +1,5 @@
 // scoreboarding.js
 
-function teste() {
-    console.log("aa");
-}
 
 function getConfig() {
     var conf = {};
@@ -55,9 +52,10 @@ function getInst(i) {
 
     return inst;
 }
-//TODO: Descomentar
+
+//Alerta padrão para entradas inválidas das instruções
 function alertValidaInstrucao(instrucao) {
-    saida = "A instrução \n"
+    saida = "A instrução \n";
     saida += instrucao["d"] + " " + instrucao["r"] + ", ";
     saida += instrucao["s"] + ", " + instrucao["t"];
     saida += " não atende os paramêtros do comando " + instrucao["d"];
@@ -74,46 +72,51 @@ function validaInstrucao(instrucao) {
         var comando = instrucao["d"]
         var falhou = false;
         if(comando == "LD" || comando == "SD") {
-            if(instrucao["r"][0] != 'F' || isNaN(parseInt(instrucao["s"])) || (instrucao["t"][0] != 'R')) {
+            if((instrucao["r"][0] != 'F' && instrucao["r"][0] != 'R') || isNaN(parseInt(instrucao["s"])) || (instrucao["t"][0] != 'R')) {
                 alertValidaInstrucao(instrucao);
-                return false; //TODO: modificar depois para false
+                return false;
             }
             return true;
         }
         if(comando == "BEQ") {
             if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || (instrucao["t"].replace(" ", "") == "")) {
                 alertValidaInstrucao(instrucao);
-                return false; //TODO: modificar depois para false
+                return false;
             }
             return true;
         }
         if(comando == "BNEZ") {
             if(instrucao["r"][0] != 'R' || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
                 alertValidaInstrucao(instrucao);
-                return false; //TODO: modificar depois para false
+                return false;
             }
             return true;
         }
         if(comando == "ADD") {
             if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || instrucao["t"][0] != 'R') {
                 alertValidaInstrucao(instrucao);
-                return false; //TODO: modificar depois para false
+                return false;
             }
             return true;
         }
         if(comando == "DADDUI") {
             if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || isNaN(parseInt(instrucao["t"]))) {
                 alertValidaInstrucao(instrucao);
-                return false; //TODO: modificar depois para false
+                return false;
             }
         }
-        return true; // esse é true msm
+        return true;
     }
-    if(instrucao["r"][0] != 'F' || instrucao["s"][0] != 'F' || instrucao["t"][0] != 'F') {
+
+    if(instrucao["r"][0] != 'F' || instrucao["s"][0] != 'F' || instrucao["t"][0] != 'F' 
+		|| instrucao["r"][instrucao["r"].length-1] % 2 != 0   //verifica se o número do registrador é par
+		|| instrucao["s"][instrucao["s"].length-1] % 2 != 0 
+		|| instrucao["t"][instrucao["t"].length-1] % 2 != 0) {
+			
         alertValidaInstrucao(instrucao);
-        return false; //TODO: modificar depois para false
+        return false;
     }
-    return true; //esse é true tbm
+    return true;
     
 
 }
@@ -209,7 +212,7 @@ function inicializaDiagrama(CONFIG, insts) {
     }
 
     diagrama["tabela"] = tabela;
-    //Unidades funcionais (a tabela maior e mais chata)
+    //Unidades funcionais
     var ufs = {};
     for(var tipoUnidade in CONFIG["unidades"]) {
         for(i = 0; i < CONFIG["unidades"][tipoUnidade]; i++) {
@@ -663,7 +666,7 @@ function geraTabelaParaInserirInstrucoes(nInst) {
                         "<option value=\"BNEZ\">BNEZ</option>" + 
                     "</td>" +
                     "<td><input type=\"text\" name=\""+ r + "\" id=\""+ r + "\" size=\"3\" maxlength=\"3\" /></td>" + 
-                    "<td><input type=\"text\" name=\""+ s + "\" id=\""+ s + "\" size=\"3\" maxlength=\"3\" /></td>" + 
+                    "<td><input type=\"text\" name=\""+ s + "\" id=\""+ s + "\" size=\"3\" maxlength=\"5\" /></td>" + 
                     "<td><input type=\"text\" name=\""+ t + "\" id=\""+ t + "\" size=\"3\" maxlength=\"3\" /></td>" + 
                 "</tr>"
             );
