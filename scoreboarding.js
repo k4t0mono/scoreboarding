@@ -72,7 +72,7 @@ function validaInstrucao(instrucao) {
         var comando = instrucao["d"]
         var falhou = false;
         if(comando == "LD" || comando == "SD") {
-            if((instrucao["r"][0] != 'F' && instrucao["r"][0] != 'R') || isNaN(parseInt(instrucao["s"])) || (instrucao["t"][0] != 'R')) {
+            if(instrucao["r"][0] != 'F' || isNaN(parseInt(instrucao["s"])) || (instrucao["t"][0] != 'R')) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
