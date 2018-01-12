@@ -676,14 +676,17 @@ function geraTabelaParaInserirInstrucoes(nInst) {
 }
 
 
+// -----------------------------------------------------------------------------
+
 function carregaExemplo() {
     var ex = $("#exemploSelect").val();
     console.log(ex);
+    var confirmou = false;
 
     if(ex == 1) {
         console.log("Exemplo 1");
         $("#nInst").val(6);
-        geraTabelaParaInserirInstrucoes(6);
+        confirmou = confirmarNInst();
 
         $("#D0").val("LD");
         $("#R0").val("F6");
@@ -722,10 +725,20 @@ function carregaExemplo() {
         $("#fuFPMul").val(2);
     }
 
+    return confirmou;
+}
+
+
+function confirmarNInst() {
+    var nInst = $("#nInst").val();
+    if(nInst < 1) {
+        alert("O número de instruções deve ser no mínimo 1");
+        return false;
+    }
+    geraTabelaParaInserirInstrucoes(nInst);
     return true;
 }
 
-// -----------------------------------------------------------------------------
 
 $(document).ready(function() {
     var confirmou = false;
@@ -737,12 +750,7 @@ $(document).ready(function() {
     });
 
     $("#confirmarNInst").click(function() {
-        var nInst = $("#nInst").val();
-        if(nInst < 1) {
-            alert("O número de instruções deve ser no mínimo 1");
-            return;
-        }
-        confirmou = true;
+        confirmou = confirmarNInst();
     });
 
     $("#enviar").click(function() {
