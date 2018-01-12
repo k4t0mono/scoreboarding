@@ -740,10 +740,37 @@ function confirmarNInst() {
 }
 
 
+function limparCampos() {
+    $("#exemploSelect").val("---");
+
+    $("#nInst").val(1);
+    $("#listaInstrucoes").html("");
+
+    $("#ciclosInt").val(1);
+    $("#ciclosFPAdd").val(1);
+    $("#ciclosFPMul").val(1);
+    $("#ciclosFPDiv").val(1);
+
+    $("#fuInt").val(1);
+    $("#fuFPAdd").val(1);
+    $("#fuFPMul").val(1);
+    $("#fuFPDiv").val(1);
+
+    $("#clock").html("");
+    $("#estadoInst").html("");
+    $("#estadoUF").html("");
+    $("#estadoMem").html("");
+}
+
+
 $(document).ready(function() {
     var confirmou = false;
     var diagrama = null;
     var terminou = false;
+
+    $("#limpar").click(function() {
+        limparCampos();
+    })
 
     $("#carregaExemplo").click(function() {
         confirmou = carregaExemplo();
