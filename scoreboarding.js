@@ -9,20 +9,20 @@ function getConfig() {
         alert("O número de instruções deve ser no mínimo 1!");
         return null;
     }
-    
+
     var ciclos = {}
 
     ciclos["Integer"] = $("#ciclosInt").val();
     ciclos["Add"] = $("#ciclosFPAdd").val();
     ciclos["Mult"] = $("#ciclosFPMul").val();
     ciclos["Div"] = $("#ciclosFPDiv").val();
-    
+
     if ((ciclos["Integer"] < 1) || (ciclos["Add"] < 1) ||
         (ciclos["Mult"] < 1) || (ciclos["Div"] < 1)) {
         alert("A quantidade de ciclos por instrução, para todas as unidades, deve ser de no mínimo 1 ciclo!");
         return null;
     }
-    
+
     conf["ciclos"] = ciclos
 
     var unidades = {}
@@ -108,16 +108,16 @@ function validaInstrucao(instrucao) {
         return true;
     }
 
-    if(instrucao["r"][0] != 'F' || instrucao["s"][0] != 'F' || instrucao["t"][0] != 'F' 
+    if(instrucao["r"][0] != 'F' || instrucao["s"][0] != 'F' || instrucao["t"][0] != 'F'
 		|| instrucao["r"][instrucao["r"].length-1] % 2 != 0   //verifica se o número do registrador é par
-		|| instrucao["s"][instrucao["s"].length-1] % 2 != 0 
+		|| instrucao["s"][instrucao["s"].length-1] % 2 != 0
 		|| instrucao["t"][instrucao["t"].length-1] % 2 != 0) {
-			
+
         alertValidaInstrucao(instrucao);
         return false;
     }
     return true;
-    
+
 
 }
 
@@ -169,7 +169,7 @@ function temEscrita(comando) {
         default:
             return true;
     }
-}   
+}
 
 function destinoEhPontoFlutuante(item) {
     if(item[0] == "F") {
@@ -333,7 +333,7 @@ function atualizaUnidades(unidade, unidades) {
                         unidadeAux["rk"] = "sim";
                     }
                 }
-                
+
                 if(unidadeAux["instrucao"]["d"] == "BEQ") {
                     if(unidade["fi"] == unidadeAux["fj"]) {
                         unidadeAux["qj"] = null;
@@ -363,7 +363,7 @@ function escreveDestino(diagrama) {
             }
         }
     }
-    
+
 }
 
 function leOperandos(diagrama) {
@@ -409,24 +409,24 @@ function leOperandos(diagrama) {
 
 function avancaCiclo(diagrama) {
     ++diagrama["clock"]; // Provavelmente deve ser trocado
-    
+
     escreveDestino(diagrama);
     decrementaUnidadeFuncional(diagrama);
     leOperandos(diagrama);
     despachaInst(diagrama);
-    
+
     atualizaClock(diagrama["clock"]);
     atualizaTabelaEstadoInstrucaoHTML(diagrama["tabela"]);
     atualizaTabelaEstadoUFHTML(diagrama["uf"]);
     atualizaTabelaEstadoMenHTML(diagrama["destino"]);
-    
+
     var achou = false;
     for(i in diagrama["tabela"]) {
         if(!diagrama["tabela"][i]["wr"]) {
             achou = true;
         }
     }
-    
+
     return (!achou);
 }
 
@@ -461,7 +461,7 @@ function despachaInst(diagrama) {
             }
         }
     }
-    
+
     // Despacha a instrucao
     var inst = diagrama["tabela"][pos];
     var escreve = temEscrita(inst["d"]);
@@ -480,7 +480,7 @@ function despachaInst(diagrama) {
         }
         uf["fj"] = ehRegistrador(inst["s"]) ? inst["s"] : null;
         uf["fk"] = ehRegistrador(inst["t"]) ? inst["t"] : null;
-        
+
         if(diagrama["destino"][inst["r"]] && !escreve) {
             uf["qi"] = diagrama["destino"][inst["r"]];
         }
@@ -503,7 +503,7 @@ function despachaInst(diagrama) {
         if(escreve) {
             diagrama["destino"][inst["r"]] = nomeUF;
         }
-        
+
     } else {
         //for(key in diagrama["uf"]) {
             //unidade = diagrama["uf"][key]
@@ -649,7 +649,7 @@ function geraTabelaParaInserirInstrucoes(nInst) {
             var r = "R" + i;
             var s = "S" + i;
             var t = "T" + i;
-            tabela += (            
+            tabela += (
                 "<tr>" +
                     "<td>" +
                         "<select size=\"1\" name=\"" + d + "\" id=\"" + d + "\">" +
@@ -659,15 +659,15 @@ function geraTabelaParaInserirInstrucoes(nInst) {
                         "<option value=\"MULTD\">MULTD</option>" +
                         "<option value=\"DIVD\">DIVD</option>" +
                         "<option value=\"ADDD\">ADDD</option>" +
-                        "<option value=\"SUBD\">SUBD</option>" + 
-                        "<option value=\"ADD\">ADD</option>" + 
-                        "<option value=\"DADDUI\">DADDUI</option>" + 
-                        "<option value=\"BEQ\">BEQ</option>" + 
-                        "<option value=\"BNEZ\">BNEZ</option>" + 
+                        "<option value=\"SUBD\">SUBD</option>" +
+                        "<option value=\"ADD\">ADD</option>" +
+                        "<option value=\"DADDUI\">DADDUI</option>" +
+                        "<option value=\"BEQ\">BEQ</option>" +
+                        "<option value=\"BNEZ\">BNEZ</option>" +
                     "</td>" +
-                    "<td><input type=\"text\" name=\""+ r + "\" id=\""+ r + "\" size=\"3\" maxlength=\"3\" /></td>" + 
-                    "<td><input type=\"text\" name=\""+ s + "\" id=\""+ s + "\" size=\"3\" maxlength=\"5\" /></td>" + 
-                    "<td><input type=\"text\" name=\""+ t + "\" id=\""+ t + "\" size=\"3\" maxlength=\"3\" /></td>" + 
+                    "<td><input type=\"text\" name=\""+ r + "\" id=\""+ r + "\" size=\"3\" maxlength=\"3\" /></td>" +
+                    "<td><input type=\"text\" name=\""+ s + "\" id=\""+ s + "\" size=\"3\" maxlength=\"5\" /></td>" +
+                    "<td><input type=\"text\" name=\""+ t + "\" id=\""+ t + "\" size=\"3\" maxlength=\"3\" /></td>" +
                 "</tr>"
             );
         }
@@ -676,23 +676,75 @@ function geraTabelaParaInserirInstrucoes(nInst) {
 }
 
 
+function carregaExemplo() {
+    var ex = $("#exemploSelect").val();
+    console.log(ex);
+
+    if(ex == 1) {
+        console.log("Exemplo 1");
+        $("#nInst").val(6);
+        geraTabelaParaInserirInstrucoes(6);
+
+        $("#D0").val("LD");
+        $("#R0").val("F6");
+        $("#S0").val(34);
+        $("#T0").val("R2");
+
+        $("#D1").val("LD");
+        $("#R1").val("F2");
+        $("#S1").val(45);
+        $("#T1").val("R3");
+
+        $("#D2").val("MULTD");
+        $("#R2").val("F0");
+        $("#S2").val("F2");
+        $("#T2").val("F4");
+
+        $("#D3").val("SUBD");
+        $("#R3").val("F8");
+        $("#S3").val("F6");
+        $("#T3").val("F2");
+
+        $("#D4").val("DIVD");
+        $("#R4").val("F10");
+        $("#S4").val("F0");
+        $("#T4").val("F6");
+
+        $("#D5").val("ADDD");
+        $("#R5").val("F6");
+        $("#S5").val("F8");
+        $("#T5").val("F2");
+
+        $("#ciclosFPMul").val(10);
+        $("#ciclosFPDiv").val(40);
+        $("#ciclosFPAdd").val(2);
+
+        $("#fuFPMul").val(2);
+    }
+
+    return true;
+}
+
 // -----------------------------------------------------------------------------
 
 $(document).ready(function() {
     var confirmou = false;
     var diagrama = null;
     var terminou = false;
-    
+
+    $("#carregaExemplo").click(function() {
+        confirmou = carregaExemplo();
+    });
+
     $("#confirmarNInst").click(function() {
         var nInst = $("#nInst").val();
         if(nInst < 1) {
             alert("O número de instruções deve ser no mínimo 1");
             return;
         }
-        geraTabelaParaInserirInstrucoes(nInst);
         confirmou = true;
     });
-    
+
     $("#enviar").click(function() {
         if(!confirmou) {
             alert("Confirme o número de instruções!");
@@ -727,7 +779,6 @@ $(document).ready(function() {
             return;
         }
         terminou = avancaCiclo(diagrama);
-        // $("#code").text(`${JSON.stringify(diagrama, null, 2)}\n`);
 
     });
     $("#resultado").click(function() {
@@ -739,42 +790,4 @@ $(document).ready(function() {
             terminou = avancaCiclo(diagrama);
         }
     });
-
-    // $("#proximo").click(function() {
-    //     if(diagrama != null) {
-    //         var instrucao = diagrama["tabela"][0]
-    //         if(instrucao["is"] == null) {
-    //             instrucao["is"] = 1;
-    //             diagrama["clock"] = 1;
-    //             var unidade = getUnidadeInstrucao(instrucao["d"]);
-    //             if(unidade == "INVALIDO") {
-    //                 alert("INVALIDO");
-    //             } else {
-    //                 var uf = diagrama["uf"][unidade + "1"];
-    //                 uf["tempo"] = diagrama["ciclos"][unidade];
-    //                 uf["ocupado"] = true;
-    //                 uf["operacao"] = instrucao["d"];
-    //                 uf["fi"] = instrucao["r"];
-    //                 if(instrucao["r"] in diagrama["destino"] && ((instrucao["d"] != "SD") && (instrucao["d"] != "SW"))) {
-    //                     diagrama["destino"][instrucao["r"]] = unidade + "1";
-    //                 }
-    //                 if(ehRegistrador(instrucao["s"])) {
-    //                     uf["fj"] = instrucao["s"];
-    //                     uf["rj"] = true;
-    //                 }
-    //                 if(ehRegistrador(instrucao["t"])) {
-    //                     uf["fk"] = instrucao["t"];
-    //                     uf["rk"] = true;
-    //                 }
-    //             }
-    //
-    //         } else {
-    //             diagrama["clock"]++;
-    //             for(var uf in diagrama["ufs"]) {
-    //
-    //             }
-    //         }
-    //         $("#code").text(`${JSON.stringify({"diagrama":diagrama}, null, 2)}\n`);
-    //     }
-    // });
 });

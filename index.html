@@ -15,6 +15,14 @@
     <div class="row mx-5">
         <aside class="col-4">
             <p>
+                Lista de exemplos:<br />
+                <select size="1" name="exemploSelect" id="exemploSelect">
+                    <option>---</option>
+                    <option value="1">Exemplo 1</option>
+                </select>
+                <button type="submit" name="carregaExemplo" id="carregaExemplo">Carregar</button>
+            </p>
+            <p>
                 Número de instruções:<br />
                 <input type="number" name="nInst" id="nInst" value="1" min="1" maxlength />
                 <button type="submit" name="confirmarNInst" id="confirmarNInst">Confirmar</button>
@@ -22,7 +30,7 @@
 
             <p>Lista de instruções:</p>
             <div id = "listaInstrucoes"></div>
-        
+
             <p>Ciclos por instrução:</p>
                 <p>
                     <td>Inteiro</td>
@@ -57,7 +65,7 @@
                     <td>FP Div</td>
                     <td><input type="number" min="1" value="1" name="fuFPDiv" id="fuFPDiv" /></td>
                 </p>
-                
+
                 <br />
                 <button type="submit" id="enviar">Enviar</button>
                 <button type="reset">Limpar</button>
@@ -68,7 +76,7 @@
                 <button type="button" id="proximo">Proximo</button>
                 <button type="button" id="resultado">Resultado</button>
             </div>
-            
+
             <div id="clock"></div>
             <div id="estadoInst"></div>
             <div id="estadoUF"></div>
