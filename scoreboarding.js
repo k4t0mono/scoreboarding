@@ -62,6 +62,16 @@ function alertValidaInstrucao(instrucao) {
     alert(saida);
 }
 
+
+function invalidaInstR(instrucao) {
+	return (instrucao[0] != 'R' || instrucao.replace("R", "") == "" || isNaN(instrucao.replace("R", "")));	
+}
+
+function invalidaInstF(instrucao) {
+	return (instrucao[0] != 'F' || instrucao.replace("F", "") == "" ||
+			instrucao.replace("F", "") % 2 != 0);
+}
+
 function validaInstrucao(instrucao) {
     var unidade = getUnidadeInstrucao(instrucao["d"]);
     if(!unidade) {
@@ -71,36 +81,37 @@ function validaInstrucao(instrucao) {
     if(unidade == "Integer") {
         var comando = instrucao["d"]
         var falhou = false;
+        
         if(comando == "LD" || comando == "SD") {
-            if(instrucao["r"][0] != 'F' || isNaN(parseInt(instrucao["s"])) || (instrucao["t"][0] != 'R')) {
-                alertValidaInstrucao(instrucao);
-                return false;
-            }
+			if(invalidaInstF(instrucao["r"]) || isNaN(parseInt(instrucao["s"])) || invalidaInstR(instrucao["t"])) {
+				alertValidaInstrucao(instrucao);
+				return false;
+			}
             return true;
         }
         if(comando == "BEQ") {
-            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || (instrucao["t"].replace(" ", "") == "")) {
+            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || (instrucao["t"].replace(" ", "") == "")) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "BNEZ") {
-            if(instrucao["r"][0] != 'R' || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
+            if(invalidaInstR(instrucao["r"]) || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "ADD") {
-            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || instrucao["t"][0] != 'R' ) {
+            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || invalidaInstR(instrucao["t"])) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "DADDUI") {
-            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || isNaN(parseInt(instrucao["t"]))) {
+            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || isNaN(parseInt(instrucao["t"]))) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
@@ -108,11 +119,7 @@ function validaInstrucao(instrucao) {
         return true;
     }
 
-    if(instrucao["r"][0] != 'F' || instrucao["s"][0] != 'F' || instrucao["t"][0] != 'F'
-		|| instrucao["r"][instrucao["r"].length-1] % 2 != 0   //verifica se o número do registrador é par
-		|| instrucao["s"][instrucao["s"].length-1] % 2 != 0
-		|| instrucao["t"][instrucao["t"].length-1] % 2 != 0) {
-
+    if(invalidaInstF(instrucao["r"]) || invalidaInstF(instrucao["s"]) || invalidaInstF(instrucao["t"])) {
         alertValidaInstrucao(instrucao);
         return false;
     }
