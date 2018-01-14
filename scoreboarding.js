@@ -62,6 +62,16 @@ function alertValidaInstrucao(instrucao) {
     alert(saida);
 }
 
+
+function invalidaInstR(instrucao) {
+	return (instrucao[0] != 'R' || instrucao.replace("R", "") == "" || isNaN(instrucao.replace("R", "")));	
+}
+
+function invalidaInstF(instrucao) {
+	return (instrucao[0] != 'F' || instrucao.replace("F", "") == "" ||
+			instrucao.replace("F", "") % 2 != 0);
+}
+
 function validaInstrucao(instrucao) {
     var unidade = getUnidadeInstrucao(instrucao["d"]);
     if(!unidade) {
@@ -71,36 +81,37 @@ function validaInstrucao(instrucao) {
     if(unidade == "Integer") {
         var comando = instrucao["d"]
         var falhou = false;
+        
         if(comando == "LD" || comando == "SD") {
-            if(instrucao["r"][0] != 'F' || isNaN(parseInt(instrucao["s"])) || (instrucao["t"][0] != 'R')) {
-                alertValidaInstrucao(instrucao);
-                return false;
-            }
+			if(invalidaInstF(instrucao["r"]) || isNaN(parseInt(instrucao["s"])) || invalidaInstR(instrucao["t"])) {
+				alertValidaInstrucao(instrucao);
+				return false;
+			}
             return true;
         }
         if(comando == "BEQ") {
-            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || (instrucao["t"].replace(" ", "") == "")) {
+            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || (instrucao["t"].replace(" ", "") == "")) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "BNEZ") {
-            if(instrucao["r"][0] != 'R' || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
+            if(invalidaInstR(instrucao["r"]) || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "ADD") {
-            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || instrucao["t"][0] != 'R') {
+            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || invalidaInstR(instrucao["t"])) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "DADDUI") {
-            if(instrucao["r"][0] != 'R' || instrucao["s"][0] != 'R' || isNaN(parseInt(instrucao["t"]))) {
+            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || isNaN(parseInt(instrucao["t"]))) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
@@ -108,11 +119,7 @@ function validaInstrucao(instrucao) {
         return true;
     }
 
-    if(instrucao["r"][0] != 'F' || instrucao["s"][0] != 'F' || instrucao["t"][0] != 'F'
-		|| instrucao["r"][instrucao["r"].length-1] % 2 != 0   //verifica se o número do registrador é par
-		|| instrucao["s"][instrucao["s"].length-1] % 2 != 0
-		|| instrucao["t"][instrucao["t"].length-1] % 2 != 0) {
-
+    if(invalidaInstF(instrucao["r"]) || invalidaInstF(instrucao["s"]) || invalidaInstF(instrucao["t"])) {
         alertValidaInstrucao(instrucao);
         return false;
     }
@@ -679,53 +686,28 @@ function geraTabelaParaInserirInstrucoes(nInst) {
 // -----------------------------------------------------------------------------
 
 function carregaExemplo() {
-    var ex = $("#exemploSelect").val();
-    console.log(ex);
-    var confirmou = false;
+    var exN = $("#exemploSelect").val();
 
-    if(ex == 1) {
-        console.log("Exemplo 1");
-        $("#nInst").val(6);
+    $.getJSON(`./exemplos/ex${exN}.json`, function() {
+        console.log("Lido :3");
+
+    }).fail(function() {
+      alert("Não foi possivel carregar o exemplo.")
+    }).done(function(data) {
+        $("#nInst").val(data["insts"].length);
         confirmou = confirmarNInst();
 
-        $("#D0").val("LD");
-        $("#R0").val("F6");
-        $("#S0").val(34);
-        $("#T0").val("R2");
+        for (var i = 0; i < data["insts"].length; i++) {
+           $(`#D${i}`).val(data["insts"][i]["D"]);
+           $(`#R${i}`).val(data["insts"][i]["R"]);
+           $(`#S${i}`).val(data["insts"][i]["S"]);
+           $(`#T${i}`).val(data["insts"][i]["T"]);
+        }
 
-        $("#D1").val("LD");
-        $("#R1").val("F2");
-        $("#S1").val(45);
-        $("#T1").val("R3");
-
-        $("#D2").val("MULTD");
-        $("#R2").val("F0");
-        $("#S2").val("F2");
-        $("#T2").val("F4");
-
-        $("#D3").val("SUBD");
-        $("#R3").val("F8");
-        $("#S3").val("F6");
-        $("#T3").val("F2");
-
-        $("#D4").val("DIVD");
-        $("#R4").val("F10");
-        $("#S4").val("F0");
-        $("#T4").val("F6");
-
-        $("#D5").val("ADDD");
-        $("#R5").val("F6");
-        $("#S5").val("F8");
-        $("#T5").val("F2");
-
-        $("#ciclosFPMul").val(10);
-        $("#ciclosFPDiv").val(40);
-        $("#ciclosFPAdd").val(2);
-
-        $("#fuFPMul").val(2);
-    }
-
-    return confirmou;
+        for (var key in data["config"]) {
+           $(`#${key}`).val(parseInt(data["config"][key]));
+        }
+    });
 }
 
 
@@ -773,7 +755,8 @@ $(document).ready(function() {
     })
 
     $("#carregaExemplo").click(function() {
-        confirmou = carregaExemplo();
+        carregaExemplo();
+        confirmou = true;
     });
 
     $("#confirmarNInst").click(function() {
