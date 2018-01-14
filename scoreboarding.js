@@ -64,12 +64,12 @@ function alertValidaInstrucao(instrucao) {
 
 
 function invalidaInstR(instrucao) {
-	return (instrucao[0] != 'R' || instrucao.replace("R", "") == "" || isNaN(instrucao.replace("R", "")));	
+    return (instrucao[0] != 'R' || instrucao.replace("R", "") == "" || isNaN(instrucao.replace("R", "")));  
 }
 
 function invalidaInstF(instrucao) {
-	return (instrucao[0] != 'F' || instrucao.replace("F", "") == "" ||
-			instrucao.replace("F", "") % 2 != 0);
+    return (instrucao[0] != 'F' || instrucao.replace("F", "") == "" ||
+            instrucao.replace("F", "") % 2 != 0);
 }
 
 function validaInstrucao(instrucao) {
@@ -83,10 +83,10 @@ function validaInstrucao(instrucao) {
         var falhou = false;
         
         if(comando == "LD" || comando == "SD") {
-			if(invalidaInstF(instrucao["r"]) || isNaN(parseInt(instrucao["s"])) || invalidaInstR(instrucao["t"])) {
-				alertValidaInstrucao(instrucao);
-				return false;
-			}
+            if(invalidaInstF(instrucao["r"]) || isNaN(parseInt(instrucao["s"])) || invalidaInstR(instrucao["t"])) {
+                alertValidaInstrucao(instrucao);
+                return false;
+            }
             return true;
         }
         if(comando == "BEQ") {
@@ -362,6 +362,13 @@ function escreveDestino(diagrama) {
         var unidade = unidades[i];
         if(unidade["ocupado"] && !unidade["escrevendo"]) {
             var linha = diagrama["tabela"][unidade["instrucao"]["indice"]];
+            if(!temEscrita(unidade["instrucao"]["d"]) && linha["ec"]) {
+                linha["wr"] = diagrama["clock"];
+                unidade["tempo"] = null;
+                unidade["ocupado"] = false;
+                unidade["escrevendo"] = true;
+                return;
+            }
             if(primeiraInstrucaoComDestino(unidade, unidades) && ninguemTemQueLerAntes(unidade, unidades, diagrama) && linha["ec"]) {
                 linha["wr"] = diagrama["clock"];
                 unidade["tempo"] = null;
@@ -704,9 +711,15 @@ function carregaExemplo() {
            $(`#T${i}`).val(data["insts"][i]["T"]);
         }
 
-        for (var key in data["config"]) {
-           $(`#${key}`).val(parseInt(data["config"][key]));
+        for (var key in data["config"]["ciclos"]) {
+           $(`#${key}`).val(parseInt(data["config"]["ciclos"][key]));
         }
+        
+        for (var key in data["config"]["unidades"]) {
+            $(`#${key}`).val(parseInt(data["config"]["unidades"][key]));
+        }
+        
+        
     });
 }
 
