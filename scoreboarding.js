@@ -62,14 +62,23 @@ function alertValidaInstrucao(instrucao) {
     alert(saida);
 }
 
-
-function invalidaInstR(instrucao) {
-    return (instrucao[0] != 'R' || instrucao.replace("R", "") == "" || isNaN(instrucao.replace("R", "")));  
+function numeroEhInteiro(numero) {
+    valor = parseInt(numero);
+    if (valor != numero){
+        return false;
+    }
+    return true;
 }
 
-function invalidaInstF(instrucao) {
-    return (instrucao[0] != 'F' || instrucao.replace("F", "") == "" ||
-            instrucao.replace("F", "") % 2 != 0);
+function registradorInvalidoR(registrador) {
+	 return (registrador[0] != 'R' || registrador.replace("R", "") == "" || isNaN(registrador.replace("R", "")))
+            || !numeroEhInteiro(registrador.replace("R", ""));
+}
+
+function registradorInvalidoF(registrador) {
+    return (registrador[0] != 'F' || registrador.replace("F", "") == "" ||
+        registrador.replace("F", "") % 2 != 0 || registrador.replace("F", "") > 30) ||
+        !numeroEhInteiro(registrador.replace("F", ""));
 }
 
 function validaInstrucao(instrucao) {
@@ -81,37 +90,37 @@ function validaInstrucao(instrucao) {
     if(unidade == "Integer") {
         var comando = instrucao["d"]
         var falhou = false;
-        
+
         if(comando == "LD" || comando == "SD") {
-            if(invalidaInstF(instrucao["r"]) || isNaN(parseInt(instrucao["s"])) || invalidaInstR(instrucao["t"])) {
-                alertValidaInstrucao(instrucao);
-                return false;
-            }
+			if(registradorInvalidoF(instrucao["r"]) || isNaN(parseInt(instrucao["s"])) || registradorInvalidoR(instrucao["t"])) {
+				alertValidaInstrucao(instrucao);
+				return false;
+			}
             return true;
         }
         if(comando == "BEQ") {
-            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || (instrucao["t"].replace(" ", "") == "")) {
+            if(registradorInvalidoR(instrucao["r"]) || registradorInvalidoR(instrucao["s"]) || (instrucao["t"].replace(" ", "") == "")) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "BNEZ") {
-            if(invalidaInstR(instrucao["r"]) || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
+            if(registradorInvalidoR(instrucao["r"]) || (instrucao["s"].replace(" ", "") == "") || (instrucao["t"].replace(" ", "") != "")) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "ADD") {
-            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || invalidaInstR(instrucao["t"])) {
+            if(registradorInvalidoR(instrucao["r"]) || registradorInvalidoR(instrucao["s"]) || registradorInvalidoR(instrucao["t"])) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
             return true;
         }
         if(comando == "DADDUI") {
-            if(invalidaInstR(instrucao["r"]) || invalidaInstR(instrucao["s"]) || isNaN(parseInt(instrucao["t"]))) {
+            if(registradorInvalidoR(instrucao["r"]) || registradorInvalidoR(instrucao["s"]) || isNaN(parseInt(instrucao["t"]))) {
                 alertValidaInstrucao(instrucao);
                 return false;
             }
@@ -119,12 +128,11 @@ function validaInstrucao(instrucao) {
         return true;
     }
 
-    if(invalidaInstF(instrucao["r"]) || invalidaInstF(instrucao["s"]) || invalidaInstF(instrucao["t"])) {
+    if(registradorInvalidoF(instrucao["r"]) || registradorInvalidoF(instrucao["s"]) || registradorInvalidoF(instrucao["t"])) {
         alertValidaInstrucao(instrucao);
         return false;
     }
     return true;
-
 
 }
 
@@ -268,7 +276,7 @@ function decrementaUnidadeFuncional(diagrama) {
                 if(unidade["tempo"]) {
                     unidade["tempo"]--;
                 }
-                if(unidade["tempo"] === 0 && !unidade["travou"]) {
+                if(unidade["tempo"] <= 0 && !unidade["travou"]) {
                     instrucao = unidade["instrucao"];
                     diagrama["tabela"][instrucao["indice"]]["ec"] = diagrama["clock"];
                     unidade["travou"] = true;
@@ -714,12 +722,12 @@ function carregaExemplo() {
         for (var key in data["config"]["ciclos"]) {
            $(`#${key}`).val(parseInt(data["config"]["ciclos"][key]));
         }
-        
+
         for (var key in data["config"]["unidades"]) {
             $(`#${key}`).val(parseInt(data["config"]["unidades"][key]));
         }
-        
-        
+
+
     });
 }
 
