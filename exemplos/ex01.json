@@ -1,11 +1,18 @@
 {
-	"config": {
-		"ciclosInt": 1,
-		"ciclosFPAdd": 2,
-		"ciclosFPMul": 10,
-		"ciclosFPDiv": 40
-	},
-
+    "config": {
+        "ciclos": {
+            "ciclosInt": 1,
+            "ciclosFPAdd": 2,
+            "ciclosFPMul": 10,
+            "ciclosFPDiv": 40
+        },
+        "unidades": {
+            "fuInt": 1,
+            "fuFPAdd": 1,
+            "fuFPMul": 2,
+            "fuFPDiv": 1
+        }
+    },
 	"insts": [
 		{
 			"D": "LD",
