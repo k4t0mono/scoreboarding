@@ -34,7 +34,8 @@ function getConfig() {
     if ((unidades["Integer"] < 1) || (unidades["Add"] < 1) ||
         (unidades["Mult"] < 1) || (unidades["Div"] < 1)) {
         alert("A quantidade de unidades funcionais deve ser no mínimo 1!");
-        return nulls;
+        return
+ nulls;
     }
 
     conf["unidades"] = unidades;
@@ -430,7 +431,7 @@ function leOperandos(diagrama) {
 
 
 function avancaCiclo(diagrama) {
-    ++diagrama["clock"]; // Provavelmente deve ser trocado
+    ++diagrama["clock"];
 
     escreveDestino(diagrama);
     decrementaUnidadeFuncional(diagrama);
@@ -665,7 +666,7 @@ function gerarTabelaEstadoMenHTML(diagrama) {
 }
 
 function geraTabelaParaInserirInstrucoes(nInst) {
-    var tabela = "<table>"
+    var tabela = "<table id='tabelaInst'>"
         for(var i = 0; i < nInst; i++) {
             var d = "D" + i;
             var r = "R" + i;
@@ -766,6 +767,11 @@ function limparCampos() {
 }
 
 
+function verificaNInst() {
+    var tds = $("#tabelaInst").children('tbody').children('tr').length;
+    $("#nInst").val(tds);
+}
+
 $(document).ready(function() {
     var confirmou = false;
     var diagrama = null;
@@ -789,6 +795,10 @@ $(document).ready(function() {
             alert("Confirme o número de instruções!");
             return;
         }
+        
+        console.log("aqui");
+        verificaNInst();
+        
         const CONFIG = getConfig();
         if(!CONFIG) {
             return;
