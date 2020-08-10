@@ -1,7 +1,7 @@
 # scoreboarding
 
 ## Desenvolvedores
-- Arthur Cruz (@slavex008)
+- Arthur Cruz (@thuzax)
 - Breno Gomes (@k4t0mono)
 - João Pedro Teodoro (@joaopedroteo)
 - Pedro Silveira (@silventino)
